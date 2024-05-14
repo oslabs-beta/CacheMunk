@@ -1,0 +1,45 @@
+# Dependency directories
+node_modules/
+
+# Environment configuration files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Compiled files
+/dist
+/build
+/out
+/server/dist
+/client/dist
+
+# TypeScript compiled files
+*.tsbuildinfo
+
+# Optional eslint cache
+.eslintcache
+
+# zip file for initial aws deployment
+*.zip
+
+# jest coverage
+coverage/
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
