@@ -3,25 +3,32 @@ import { Redis } from 'ioredis';
 
 const { REDIS_HOST, REDIS_PORT } = process.env;
 
-if (REDIS_HOST === undefined || REDIS_PORT === undefined) {
-  console.error('Error reading from env file');
-  process.exit(1);
-}
-
-const redis = new Redis({
-  port: REDIS_PORT ? parseInt(REDIS_PORT) : 6379, // Redis port
+export const redis = new Redis({
+  port: REDIS_PORT ? parseInt(REDIS_PORT, 10) : 6379, // Redis port
   host: REDIS_HOST ?? '127.0.0.1', // Redis host
 });
 
-await redis.set('mykey', 'value');
+// Handle connection errors
+redis.on('error', (err: Error) => {
+  console.error('Redis connection error:', err);
+});
 
-redis
-  .get('mykey')
-  .then((result) => {
-    console.log(result); // Prints "value"
-  })
-  .catch((err: unknown) => {
-    console.error(err);
-  });
+// Handle reconnection attempts
+redis.on('reconnecting', (time: number) => {
+  console.warn(`Redis client attempting to reconnect in ${time.toString()}ms`);
+});
 
-await redis.set('key', 'data', 'EX', 60);
+// Handle successful connection
+redis.on('ready', () => {
+  console.log('Redis client connected and ready');
+});
+
+// Handle end event when connection is closed
+redis.on('end', () => {
+  console.log('Redis connection closed');
+});
+
+// Handle warning events
+redis.on('warning', (warning: string) => {
+  console.warn('Redis warning:', warning);
+});
