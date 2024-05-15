@@ -18,7 +18,7 @@ app.use('/data', dataRouter)
 
 
 app.use('/*', (req: Request, res: Response) => {
-  res.status(404).json('Page Not Found')
+  res.status(404).json('Page Not Found');
 });
 
 app.use((err: { log: string, status: number, message: string}, req: Request, res: Response, next: NextFunction) => {

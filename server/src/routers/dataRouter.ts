@@ -6,7 +6,7 @@ router.get('/cache', (req: Request, res: Response) => {
   res.status(200).send('read with cache');
 });
 
-router.get('/nocache', (req, res) => {
+router.get('/nocache', (req: Request, res: Response) => {
   res.status(200).send('read without cache');
 });
 
