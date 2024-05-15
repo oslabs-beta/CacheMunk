@@ -2,12 +2,16 @@ import { performance } from 'perf_hooks';
 import { Redis } from 'ioredis';
 
 function CacheMunk(redisClient: Redis) {
+  if (!(redisClient instanceof Redis)) {
+    throw new Error('redisClient must be an ioredis client');
+  }
+
   // Function to cache a query result
-  async function cacheQueryResult(queryKey: string, result: any, dependencies: string[]) {
+  async function cacheQueryResult(queryKey: string, result: string, dependencies: string[]) {
     const setStart = performance.now();
 
     // Store the query result
-    await redisClient.set(queryKey, JSON.stringify(result));
+    await redisClient.set(queryKey, result);
 
     // Track dependencies
     for (const table of dependencies) {
