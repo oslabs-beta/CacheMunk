@@ -9,7 +9,7 @@ export const logger = async (name: string, start: bigint, end: bigint): Promise<
     type: 'execution_time',
     timestamp: new Date().toISOString(),
     name,
-    execution_time: ms.toFixed(3), // execution time in milliseconds
+    execution_time: parseFloat(ms.toFixed(3)), // execution time in milliseconds
   };
 
   console.log(log);

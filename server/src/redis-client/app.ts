@@ -1,6 +1,7 @@
 import CacheMunk from './cache.js';
 import { redis } from './redisClient.js';
 import { getAllPeople, getAllCities } from './db.js';
+import msgpack from 'msgpack-lite';
 console.log('cachemunk loading');
 
 const waitForRedis = async () =>
@@ -13,23 +14,20 @@ const waitForRedis = async () =>
 await waitForRedis();
 
 const cache = CacheMunk(redis);
-console.log('cachemunk loaded');
-const cities = await getAllCities();
 
-const cities2 = await getAllCities();
-const cities3 = await getAllCities();
+console.log('cachemunk loaded');
+
+// this is the SQL query
+const cities = await getAllCities();
 
 const serializedResult = JSON.stringify(cities);
 console.log(`Serialized length: ${serializedResult.length / 1000} kB`);
 
-await cache.cacheQueryResult('cities:select', serializedResult, ['cities', 'countries']);
+// set query result into the cache
+await cache.set('cities:select', serializedResult, ['cities', 'countries']);
 
-await cache.cacheQueryResult('cities:selectAll', serializedResult, ['cities', 'countries']);
+// read from cache
+await cache.get('cities:select');
 
-await cache.getCachedQueryResult('cities:select');
-
-await cache.getCachedQueryResult('cities:selectAll');
-
-await cache.getCachedQueryResult('cities:select');
-
-// await cache.invalidateCache('people');
+// when updating the cities table:
+await cache.invalidate('cities');

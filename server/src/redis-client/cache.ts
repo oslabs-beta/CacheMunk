@@ -8,18 +8,18 @@ const CacheMunk = (redisClient: Redis) => {
   }
 
   // Function to cache a query result
-  async function cacheQueryResult(
+  async function set(
     queryKey: string,
-    result: string,
+    data: string,
     dependencies: string[],
-    ttlInSeconds = 60, // default to 1 hour in seconds
+    ttlInSeconds = 3600, // default to 1 hour in seconds
     compress = true,
   ) {
     const t0 = process.hrtime.bigint();
 
     // console.log(`result length: ${result.length}`);
     const beforeCompression = process.hrtime.bigint();
-    const compressedResult = compress ? compressSync(Buffer.from(result)) : result;
+    const compressedResult = compress ? compressSync(data) : data;
     const afterCompression = process.hrtime.bigint();
 
     // console.log(`compressed length: ${compressedResult.length}`);
@@ -46,12 +46,13 @@ const CacheMunk = (redisClient: Redis) => {
 
     const t1 = process.hrtime.bigint();
     console.log('compressed result length', compressedResult.length);
-    void logger('compression time snappy', beforeCompression, afterCompression);
+    const dataSize = Buffer.byteLength(data);
+    // void logger(`compression overhead for ${dataSize/1000}kB`, beforeCompression, afterCompression);
     void logger('cacheQueryResult', t0, t1);
   }
 
   // Function to retrieve a cached query result
-  async function getCachedQueryResult(queryKey: string, compress = true) {
+  async function get(queryKey: string, compress = true): Promise<string | null> {
     const t0 = process.hrtime.bigint();
 
     // Retrieve the cached query result based on query key
@@ -59,7 +60,11 @@ const CacheMunk = (redisClient: Redis) => {
       ? await redisClient.getBuffer(queryKey)
       : await redisClient.get(queryKey);
 
-    if (!compressedResult) return null;
+    if (!compressedResult) {
+      // this is a cache miss
+      // to do: log cache miss
+      return null;
+    }
 
     // console.log('compressed length', compressedResult.length);
 
@@ -70,19 +75,25 @@ const CacheMunk = (redisClient: Redis) => {
 
     const t1 = process.hrtime.bigint();
 
+    // this is a cache hit
+    // to do: log cache hit
+
     // console.log('result length, ', result.length);
 
     void logger('getCachedQueryResult', t0, t1);
-    void logger('decompression time snappy', beforeCompression, afterCompression);
+    // void logger('decompression time snappy', beforeCompression, afterCompression);
     return result;
   }
 
   // Function to invalidate cache based on table updates
-  async function invalidateCache(table: string) {
+  async function invalidate(dependency: string) {
     const t0 = process.hrtime.bigint();
 
-    const dependencyKey = `dependency:${table}`;
+    const dependencyKey = `dependency:${dependency}`;
     const queriesToInvalidate = await redisClient.smembers(dependencyKey);
+
+    // to do: add async mechanism to 'lock' dependency keys immediately
+    // to prevent race conditions
 
     if (queriesToInvalidate.length > 0) {
       // Create a pipeline to batch multiple operations
@@ -99,10 +110,10 @@ const CacheMunk = (redisClient: Redis) => {
 
     const t1 = process.hrtime.bigint();
 
-    void logger('invalidateCache', t0, t1);
+    void logger('invalidate', t0, t1);
   }
 
-  return { cacheQueryResult, invalidateCache, getCachedQueryResult };
+  return { set, invalidate, get };
 };
 
 export default CacheMunk;
