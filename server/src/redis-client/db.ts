@@ -1,8 +1,8 @@
 import pg from 'pg';
 const { Pool } = pg;
 import 'dotenv/config';
-import { performance } from 'perf_hooks';
 import { SELECT_ALL_PEOPLE } from './queries.js';
+import { logger } from './logger.js';
 
 const { PG_HOST, PG_PORT, PG_USER, PG_PASSWORD, PG_DB } = process.env;
 
@@ -22,14 +22,17 @@ export const pool = new Pool({
 
 export const getAllPeople = async () => {
   const client = await pool.connect();
-  const t0 = performance.now();
+  const t0 = process.hrtime.bigint();
 
-  const res = await client.query(`${SELECT_ALL_PEOPLE}`);
+  const res = await client.query(SELECT_ALL_PEOPLE);
+  const rows = res.rows;
 
-  const t1 = performance.now();
+  const t1 = process.hrtime.bigint();
 
   client.release();
 
-  console.log(`response took ${t1 - t0} ms with ${res.rows.length} rows`);
-  return res.rows;
+  void logger('getAllPeople', t0, t1);
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return rows;
 };

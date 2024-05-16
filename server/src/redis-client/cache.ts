@@ -1,4 +1,6 @@
 import { Redis } from 'ioredis';
+import { logger } from './logger.js';
+import { compressSync, uncompressSync } from 'snappy';
 
 const CacheMunk = (redisClient: Redis) => {
   if (!(redisClient instanceof Redis)) {
@@ -6,47 +8,73 @@ const CacheMunk = (redisClient: Redis) => {
   }
 
   // Function to cache a query result
-  async function cacheQueryResult(queryKey: string, result: string, dependencies: string[]) {
-    const setStart = process.hrtime.bigint();
+  async function cacheQueryResult(
+    queryKey: string,
+    result: string,
+    dependencies: string[],
+    ttlInSeconds = 3600, // default to 1 hour in seconds
+  ) {
+    const t0 = process.hrtime.bigint();
 
-    // Create a pipeline
-    const pipeline = redisClient.pipeline();
+    console.log(`result length: ${result.length}`);
+    const beforeCompression = process.hrtime.bigint();
+    const compressedResult = compressSync(Buffer.from(result));
+    const afterCompression = process.hrtime.bigint();
 
-    // Store the query result
-    pipeline.set(queryKey, result);
+    console.log(`compressed length: ${compressedResult.length}`);
 
-    // Track dependencies
-    for (const table of dependencies) {
-      const dependencyKey = `dependency:${table}`;
-      pipeline.sadd(dependencyKey, queryKey);
+    if (dependencies.length > 0) {
+      // Create a pipeline
+      const pipeline = redisClient.pipeline();
+
+      // Store the query result
+      pipeline.set(queryKey, compressedResult, 'EX', ttlInSeconds);
+
+      // Track dependencies
+      dependencies.forEach((dep) => {
+        const dependencyKey = `dependency:${dep}`;
+        pipeline.sadd(dependencyKey, queryKey);
+        pipeline.expire(dependencyKey, ttlInSeconds); // Set the TTL for the dependency key
+      });
+
+      // Execute the pipeline
+      await pipeline.exec();
+    } else {
+      await redisClient.set(queryKey, compressedResult, 'EX', ttlInSeconds);
     }
 
-    // Execute the pipeline
-    await pipeline.exec();
+    const t1 = process.hrtime.bigint();
 
-    const setEnd = process.hrtime.bigint();
-    const nanosecondsDifference = setEnd - setStart;
-    const ms = Number(nanosecondsDifference) / 1_000_000; // Convert to milliseconds
-    console.log(`cacheQueryResult took ${ms.toFixed(3)} milliseconds`);
+    void logger('compression time lz4', beforeCompression, afterCompression);
+    void logger('cacheQueryResult', t0, t1);
   }
 
+  // Function to retrieve a cached query result
   async function getCachedQueryResult(queryKey: string) {
-    const getStart = process.hrtime.bigint();
+    const t0 = process.hrtime.bigint();
 
     // Retrieve the cached query result based on query key
-    const result = await redisClient.get(queryKey);
+    const compressedResult = await redisClient.getBuffer(queryKey);
 
-    const getEnd = process.hrtime.bigint();
-    const nanosecondsDifference = getEnd - getStart;
-    const ms = Number(nanosecondsDifference) / 1_000_000; // Convert to milliseconds
-    console.log(`getCachedQueryResult took ${ms.toFixed(3)} milliseconds`);
+    if (!compressedResult) return null;
 
+    // Decompress result
+    const beforeCompression = process.hrtime.bigint();
+    const result = uncompressSync(compressedResult);
+    const afterCompression = process.hrtime.bigint();
+
+    const t1 = process.hrtime.bigint();
+
+    console.log('result length, ', result.length);
+
+    void logger('getCachedQueryResult', t0, t1);
+    void logger('decompression time lz4', beforeCompression, afterCompression);
     return result;
   }
 
   // Function to invalidate cache based on table updates
   async function invalidateCache(table: string) {
-    const invalidateStart = process.hrtime.bigint();
+    const t0 = process.hrtime.bigint();
 
     const dependencyKey = `dependency:${table}`;
     const queriesToInvalidate = await redisClient.smembers(dependencyKey);
@@ -54,18 +82,19 @@ const CacheMunk = (redisClient: Redis) => {
     if (queriesToInvalidate.length > 0) {
       // Create a pipeline to batch multiple operations
       const pipeline = redisClient.pipeline();
+
       queriesToInvalidate.forEach((queryKey) => pipeline.del(queryKey));
       pipeline.del(dependencyKey);
+
       await pipeline.exec();
     } else {
       // Clear the dependency set if it's the only key
       await redisClient.del(dependencyKey);
     }
 
-    const invalidateEnd = process.hrtime.bigint();
-    const nanosecondsDifference = invalidateEnd - invalidateStart;
-    const ms = Number(nanosecondsDifference) / 1_000_000; // Convert to milliseconds
-    console.log(`invalidateCache took ${ms.toFixed(3)} milliseconds`);
+    const t1 = process.hrtime.bigint();
+
+    void logger('invalidateCache', t0, t1);
   }
 
   return { cacheQueryResult, invalidateCache, getCachedQueryResult };

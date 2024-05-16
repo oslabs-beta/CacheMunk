@@ -8,6 +8,9 @@ export const redis = new Redis({
   host: REDIS_HOST ?? '127.0.0.1', // Redis host
 });
 
+// await redis.config('SET', 'maxmemory', '256mb');
+// await redis.config('SET', 'maxmemory-policy', 'allkeys-lru');
+
 // Handle connection errors
 redis.on('error', (err: Error) => {
   console.error('Redis connection error:', err);
