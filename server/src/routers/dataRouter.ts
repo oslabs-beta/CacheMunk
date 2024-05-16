@@ -24,6 +24,14 @@ router.get('/nocache', (req: Request, res: Response) => {
   res.status(200).send('read without cache');
 });
 
+router.get('/cache-costly', (req: Request, res: Response) => {
+  res.status(200).send('Read with Cache-Costly');
+})
+
+router.get('/nocache-costly', (req: Request, res: Response) => {
+  res.status(200).send('Read without Cache-Costly');
+})
+
 router.post('/cache', (req: Request, res: Response) => {
   // invalidate the cache based on specified dependencies
   // make insert query to the SQL database
