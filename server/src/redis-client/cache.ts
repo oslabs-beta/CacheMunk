@@ -12,16 +12,17 @@ const CacheMunk = (redisClient: Redis) => {
     queryKey: string,
     result: string,
     dependencies: string[],
-    ttlInSeconds = 3600, // default to 1 hour in seconds
+    ttlInSeconds = 60, // default to 1 hour in seconds
+    compress = true,
   ) {
     const t0 = process.hrtime.bigint();
 
-    console.log(`result length: ${result.length}`);
+    // console.log(`result length: ${result.length}`);
     const beforeCompression = process.hrtime.bigint();
-    const compressedResult = compressSync(Buffer.from(result));
+    const compressedResult = compress ? compressSync(Buffer.from(result)) : result;
     const afterCompression = process.hrtime.bigint();
 
-    console.log(`compressed length: ${compressedResult.length}`);
+    // console.log(`compressed length: ${compressedResult.length}`);
 
     if (dependencies.length > 0) {
       // Create a pipeline
@@ -44,31 +45,35 @@ const CacheMunk = (redisClient: Redis) => {
     }
 
     const t1 = process.hrtime.bigint();
-
-    void logger('compression time lz4', beforeCompression, afterCompression);
+    console.log('compressed result length', compressedResult.length);
+    void logger('compression time snappy', beforeCompression, afterCompression);
     void logger('cacheQueryResult', t0, t1);
   }
 
   // Function to retrieve a cached query result
-  async function getCachedQueryResult(queryKey: string) {
+  async function getCachedQueryResult(queryKey: string, compress = true) {
     const t0 = process.hrtime.bigint();
 
     // Retrieve the cached query result based on query key
-    const compressedResult = await redisClient.getBuffer(queryKey);
+    const compressedResult = compress
+      ? await redisClient.getBuffer(queryKey)
+      : await redisClient.get(queryKey);
 
     if (!compressedResult) return null;
 
+    // console.log('compressed length', compressedResult.length);
+
     // Decompress result
     const beforeCompression = process.hrtime.bigint();
-    const result = uncompressSync(compressedResult);
+    const result = compress ? uncompressSync(compressedResult) : compressedResult;
     const afterCompression = process.hrtime.bigint();
 
     const t1 = process.hrtime.bigint();
 
-    console.log('result length, ', result.length);
+    // console.log('result length, ', result.length);
 
     void logger('getCachedQueryResult', t0, t1);
-    void logger('decompression time lz4', beforeCompression, afterCompression);
+    void logger('decompression time snappy', beforeCompression, afterCompression);
     return result;
   }
 

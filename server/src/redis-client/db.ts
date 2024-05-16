@@ -1,7 +1,12 @@
 import pg from 'pg';
 const { Pool } = pg;
 import 'dotenv/config';
-import { SELECT_ALL_PEOPLE } from './queries.js';
+import {
+  SELECT_ALL_PEOPLE,
+  SELECT_CITIES,
+  SELECT_CITIES_COMPLEX,
+  SELECT_CITIES_NY,
+} from './queries.js';
 import { logger } from './logger.js';
 
 const { PG_HOST, PG_PORT, PG_USER, PG_PASSWORD, PG_DB } = process.env;
@@ -12,13 +17,30 @@ export const pool = new Pool({
   port: PG_PORT ? parseInt(PG_PORT) : 5432,
   password: PG_PASSWORD,
   database: PG_DB,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  // ssl: {
+  //   rejectUnauthorized: false,
+  // },
   max: 2,
   idleTimeoutMillis: 30000,
   connectionTimeoutMillis: 2000,
 });
+
+export const getAllCities = async () => {
+  const client = await pool.connect();
+  const t0 = process.hrtime.bigint();
+
+  const res = await client.query(SELECT_CITIES_NY);
+  const rows = res.rows;
+
+  const t1 = process.hrtime.bigint();
+
+  client.release();
+
+  void logger('getAllCities', t0, t1);
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  return rows;
+};
 
 export const getAllPeople = async () => {
   const client = await pool.connect();

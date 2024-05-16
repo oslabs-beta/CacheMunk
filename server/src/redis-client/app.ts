@@ -1,6 +1,6 @@
 import CacheMunk from './cache.js';
 import { redis } from './redisClient.js';
-import { getAllPeople } from './db.js';
+import { getAllPeople, getAllCities } from './db.js';
 console.log('cachemunk loading');
 
 const waitForRedis = async () =>
@@ -14,19 +14,22 @@ await waitForRedis();
 
 const cache = CacheMunk(redis);
 console.log('cachemunk loaded');
-const people = await getAllPeople();
+const cities = await getAllCities();
 
-await getAllPeople();
-console.log(people.length);
+const cities2 = await getAllCities();
+const cities3 = await getAllCities();
 
-const serializedData = JSON.stringify(people);
+const serializedResult = JSON.stringify(cities);
+console.log(`Serialized length: ${serializedResult.length / 1000} kB`);
 
-await cache.cacheQueryResult('people:select', serializedData, ['people']);
+await cache.cacheQueryResult('cities:select', serializedResult, ['cities', 'countries']);
 
-await cache.cacheQueryResult('people:selectAll', serializedData, ['people']);
+await cache.cacheQueryResult('cities:selectAll', serializedResult, ['cities', 'countries']);
 
-await cache.getCachedQueryResult('people:select');
+await cache.getCachedQueryResult('cities:select');
 
-await cache.getCachedQueryResult('people:selectAll');
+await cache.getCachedQueryResult('cities:selectAll');
+
+await cache.getCachedQueryResult('cities:select');
 
 // await cache.invalidateCache('people');
