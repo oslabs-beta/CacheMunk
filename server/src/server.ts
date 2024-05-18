@@ -43,6 +43,26 @@ register.registerMetric(httpRequestDurationMicroseconds);
 register.registerMetric(cacheHits);
 register.registerMetric(cacheMisses);
 
+// Simple cache
+// const cache = new Map<string, any>();
+
+// Cache middleware
+// app.use((req, res, next) => {
+//   const key = `${req.method}${req.originalUrl}`;
+//   if (cache.has(key)) {
+//     cacheHits.inc(); // Increment cache hit counter
+//     res.json(cache.get(key)); // Send response from cache
+//   } else {
+//     const originalSend = res.json;
+//     res.json = (data) => {
+//       cache.set(key, data); // Store response in cache
+//       cacheMisses.inc(); // Increment cache miss counter
+//       originalSend.call(res, data);
+//     };
+//     next();
+//   }
+// });
+
 // Middleware to collect response time
 app.use((req, res, next) => {
   const end = httpRequestDurationMicroseconds.startTimer();
