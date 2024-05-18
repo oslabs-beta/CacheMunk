@@ -18,16 +18,17 @@ const cache = CacheMunk(redis);
 console.log('cachemunk loaded');
 
 // this is the SQL query
-const cities = await getAllCities();
+const cities = await getAllPeople();
 
 const serializedResult = JSON.stringify(cities);
 console.log(`Serialized length: ${serializedResult.length / 1000} kB`);
 
 // set query result into the cache
-await cache.set('cities:select', serializedResult, ['cities', 'countries']);
+await cache.set('people:select', serializedResult, ['people']);
+await cache.set('testkey', 'testvalue', []);
 
 // read from cache
-await cache.get('cities:select');
+await cache.get('people:select');
 
 // when updating the cities table:
-await cache.invalidate('cities');
+// await cache.invalidate('people');
