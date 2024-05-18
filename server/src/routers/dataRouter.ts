@@ -3,7 +3,7 @@ import { cacheHits, cacheMisses } from '../server.js'; // Import the metrics
 import pool from '../database.js'; // Import the database connection
 
 const router = Router();
-const cache = new Map<string, any>(); // Primitive cache using a Map
+const cache = new Map<string, any>(); // simple cache using a Map
 
 // router.get('/cache', (req: Request, res: Response) => {
 //   // Simulate cache check
