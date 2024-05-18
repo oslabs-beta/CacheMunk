@@ -5,20 +5,46 @@ import pool from '../database.js'; // Import the database connection
 const router = Router();
 const cache = new Map<string, any>(); // Primitive cache using a Map
 
-router.get('/cache', (req: Request, res: Response) => {
-  // Simulate cache check
-  // check cache for query key
-  const isCacheHit = Math.random() > 0.5;
-  if (isCacheHit) {
-    cacheHits.inc();
-    // if true, send back result from cache
-    res.status(200).send('Read with Cache - Cache Hit!');
-  } else {
-    cacheMisses.inc();
-    // if false, directly query the SQL database
-    // send result to the cache (use async await)
-    // send the response to the front end (use async await)
-    res.status(200).send('Read with Cache - Cache Miss!');
+// router.get('/cache', (req: Request, res: Response) => {
+//   // Simulate cache check
+//   // check cache for query key
+//   const isCacheHit = Math.random() > 0.5;
+//   if (isCacheHit) {
+//     cacheHits.inc();
+//     // if true, send back result from cache
+//     res.status(200).send('Read with Cache - Cache Hit!');
+//   } else {
+//     cacheMisses.inc();
+//     // if false, directly query the SQL database
+//     // send result to the cache (use async await)
+//     // send the response to the front end (use async await)
+//     res.status(200).send('Read with Cache - Cache Miss!');
+//   }
+// });
+
+router.get('/cache', async (req: Request, res: Response) => {
+  const queryKey = req.url; // Use the request URL as the cache key
+  const query = 'SELECT * FROM public.films ORDER BY _id ASC LIMIT 100';
+
+  if (cache.has(queryKey)) {
+    cacheHits.inc(); // Increment cache hits metric
+    return res.status(200).json(cache.get(queryKey)); // Return cached data
+  }
+
+  try {
+    const client = await pool.connect();
+    const result = await client.query(query);
+    client.release();
+    cache.set(queryKey, result.rows); // Cache the result
+    cacheMisses.inc(); // Increment cache misses metric
+    res.status(200).json(result.rows);
+  } catch (err) {
+    if (err instanceof Error) {
+      console.error('Error executing query', err.stack);
+    } else {
+      console.error('Unexpected error', err);
+    }
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 });
 
