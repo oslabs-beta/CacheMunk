@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*", "__tests__/**/*"],
+  "include": ["src"],
   "compilerOptions": {
     "strict": true,
     "target": "es2022",

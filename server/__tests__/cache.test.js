@@ -61,7 +61,13 @@ describe('CacheMunk tests', () => {
 
     await set('anotherTestKey', stringifiedObj, [], 2);
     await get('anotherTestKey'); // hit
+    expect(hits).to.equal(1);
+    expect(misses).to.equal(0);
+
     await get('missingTestKey'); // miss
+    expect(hits).to.equal(1);
+    expect(misses).to.equal(1);
+
     await get('anotherTestKey'); // hit
     expect(hits).to.equal(2);
     expect(misses).to.equal(1);
