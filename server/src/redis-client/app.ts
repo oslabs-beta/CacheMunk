@@ -13,14 +13,29 @@ const waitForRedis = async () =>
 
 await waitForRedis();
 
-const cache = CacheMunk(redis);
+// load CacheMunk
+const cache = CacheMunk(redis, {
+  onCacheHit: ((queryKey, executionTime, dataLengthBytes) => {
+    console.log(`***`);
+    console.log(`cache hit on query ${queryKey} (${dataLengthBytes} bytes) in ${executionTime} ms. `);
+  }),
+  onCacheMiss: ((queryKey, executionTime) => {
+    console.log(`***`);
+    console.log(`cache miss on query ${queryKey} in ${executionTime} ms`);
+  }),
+  onWrite: ((queryKey, executionTime, originalSize, compressedSize) => {
+    console.log(`***`);
+    console.log(`wrote: ${compressedSize} bytes to cache at ${queryKey} in ${executionTime} ms`);
+    console.log(`original size: ${originalSize} bytes`);
+  })
+});
 
 console.log('cachemunk loaded');
 
 // this is the SQL query
-const cities = await getAllPeople();
+// const cities = await getAllPeople();
 
-const serializedResult = JSON.stringify(cities);
+const serializedResult = "sometextcitiesretuls";
 console.log(`Serialized length: ${serializedResult.length / 1000} kB`);
 
 // set query result into the cache
@@ -29,6 +44,7 @@ await cache.set('testkey', 'testvalue', []);
 
 // read from cache
 await cache.get('people:select');
+await cache.get('people:select2');
 
 // when updating the cities table:
 // await cache.invalidate('people');

@@ -3,7 +3,7 @@ import tseslint from 'typescript-eslint';
 import react from 'eslint-plugin-react';
 import reactRecommended from 'eslint-plugin-react/configs/recommended.js';
 import globals from 'globals';
-const { nodeBuiltin: node, browser } = globals;
+const { node, browser, mocha } = globals;
 
 export default [
   js.configs.recommended,
@@ -39,6 +39,15 @@ export default [
     },
     rules: {
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+    },
+  },
+  {
+    files: ['server/__tests__/**/*.{js,ts}'],
+    languageOptions: {
+      globals: {
+        ...node,
+        ...mocha,
+      },
     },
   },
   {

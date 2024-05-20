@@ -23,22 +23,22 @@ export const pool = new Pool({
   connectionTimeoutMillis: 2000,
 });
 
-export const getAllCities = async () => {
-  const client = await pool.connect();
-  const t0 = process.hrtime.bigint();
+// export const getAllCities = async () => {
+//   const client = await pool.connect();
+//   const t0 = process.hrtime.bigint();
 
-  const res = await client.query(SELECT_CITIES);
-  const rows = res.rows;
+//   const res = await client.query(SELECT_CITIES);
+//   const rows = res.rows;
 
-  const t1 = process.hrtime.bigint();
+//   const t1 = process.hrtime.bigint();
 
-  client.release();
+//   client.release();
 
-  void logger('getAllCities', t0, t1);
+//   void logger('getAllCities', t0, t1);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-  return rows;
-};
+//   // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+//   return rows;
+// };
 
 export const getAllPeople = async () => {
   const client = await pool.connect();

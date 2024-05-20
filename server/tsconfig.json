@@ -1,8 +1,9 @@
 {
-  "include": ["src"],
+  "include": ["src/**/*", "__tests__/**/*"],
   "compilerOptions": {
     "strict": true,
     "target": "es2022",
+    "esModuleInterop": true,
     "module": "NodeNext",
     "outDir": "./dist"
   }

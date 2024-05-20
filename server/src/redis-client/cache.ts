@@ -1,14 +1,27 @@
 import { Buffer } from 'node:buffer';
 import { Redis } from 'ioredis';
-import { logger } from './logger.js';
-import EVENT from './events.js';
 import { compress, uncompress } from 'snappy';
 
-export const createCache = (redis: Redis) => {
+interface Config {
+  onCacheHit?: (queryKey: string, executionTime: number, dataLengthBytes: number) => void,
+  onCacheMiss?: (queryKey: string, executionTime: number) => void,
+  onRead?: (queryKey: string, executionTime: number, originalSizeBytes: number, compressedSizeBytes: number) => void,
+  onWrite?: (queryKey: string, executionTime: number, originalSizeBytes: number, compressedSizeBytes: number) => void,
+  onInvalidate?: (queryKey: string, executionTime: number) => void;
+}
+
+export const createCache = (redis: Redis, options?: Config) => {
 
   if (!(redis instanceof Redis)) {
     throw new Error('ioredis client not found');
   }
+
+  const { onCacheHit, onCacheMiss, onRead, onWrite } = options ?? {};
+
+  const calcExecTime = (start: bigint, end: bigint) => {
+    const diff = end - start;
+    return Number(diff) / 1_000_000; // convert nanoseconds to milliseconds
+  };
 
   // Function to add a query result to the cache
   async function set(
@@ -52,7 +65,7 @@ export const createCache = (redis: Redis) => {
     const originalSize = Buffer.byteLength(binaryData);
     const compressedSize = Buffer.byteLength(compressedData);
 
-    void logger('set', t0, t1, originalSize, compressedSize);
+    if (onWrite) onWrite(queryKey, calcExecTime(t0, t1), originalSize, compressedSize);
   }
 
   // Function to retrieve a cached query result 
@@ -67,6 +80,8 @@ export const createCache = (redis: Redis) => {
     if (!compressedData) {
       // this is a cache miss
       // to do: log cache miss
+      const t1 = process.hrtime.bigint();
+      if (onCacheMiss) onCacheMiss(queryKey, calcExecTime(t0, t1));
       return null;
     }
 
@@ -83,7 +98,7 @@ export const createCache = (redis: Redis) => {
     const decompressedSize = Buffer.byteLength(binaryData);
 
     // Log cache hit
-    void logger('get', t0, t1, decompressedSize, compressedSize);
+    if (onCacheHit) onCacheHit(queryKey, calcExecTime(t0, t1), decompressedSize);
 
     return data;
   }
@@ -108,8 +123,6 @@ export const createCache = (redis: Redis) => {
     }
 
     const t1 = process.hrtime.bigint();
-
-    void logger('invalidate', t0, t1);
   }
 
   return { set, get, invalidate };
