@@ -6,3 +6,11 @@ body {
   background-color: beige;
   font-family: sans-serif;
 }
+
+.chart-container {
+  width: 50%;
+  height: 50%;
+  max-width: 600px;
+  max-height: 400px;
+  margin: 0 auto; /* Center the chart horizontally */
+}

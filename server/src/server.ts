@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dataRouter from './routers/dataRouter.js';
 import client from 'prom-client';
+import cors from 'cors';
 
 const app = express();
 
@@ -9,6 +10,9 @@ const PORT = 3030;
 
 // express middleware that parses JSON bodies
 app.use(express.json());
+
+// use cors middleware
+app.use(cors());
 
 // registry for prometheus metrics
 const register = new client.Registry();
