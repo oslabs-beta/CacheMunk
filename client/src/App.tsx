@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import CacheMetricsChart from './components/CacheMetricsChart';
+import ResponseTimeChart from './components/ResponseTimeChart';
 
 const App: React.FC = () => {
   const [cacheHits, setCacheHits] = useState(0);
@@ -37,6 +38,12 @@ const App: React.FC = () => {
           <CacheMetricsChart hits={cacheHits} misses={cacheMisses} />
         </div>
         <button onClick={fetchMetrics}>Reload Data</button>
+      </section>
+      <section>
+        <h1>Response Times</h1>
+        <div className='chart-container'>
+          <ResponseTimeChart />
+        </div>
       </section>
     </div>
   );

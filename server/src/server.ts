@@ -47,35 +47,27 @@ register.registerMetric(httpRequestDurationMicroseconds);
 register.registerMetric(cacheHits);
 register.registerMetric(cacheMisses);
 
-// Simple cache
-// const cache = new Map<string, any>();
-
-// Cache middleware
-// app.use((req, res, next) => {
-//   const key = `${req.method}${req.originalUrl}`;
-//   if (cache.has(key)) {
-//     cacheHits.inc(); // Increment cache hit counter
-//     res.json(cache.get(key)); // Send response from cache
-//   } else {
-//     const originalSend = res.json;
-//     res.json = (data) => {
-//       cache.set(key, data); // Store response in cache
-//       cacheMisses.inc(); // Increment cache miss counter
-//       originalSend.call(res, data);
-//     };
-//     next();
-//   }
-// });
+// Array to store response times
+const cacheResponseTimes: number[] = [];
 
 // Middleware to collect response time
 app.use((req, res, next) => {
   const end = httpRequestDurationMicroseconds.startTimer();
   res.on('finish', () => {
-    end({
-      route: req.route ? req.route.path : req.path,
-      method: req.method,
-      status_code: res.statusCode,
-    });
+    if (req.originalUrl === '/cache') {
+      const duration = end({
+        route: req.route ? req.route.path : req.path,
+        method: req.method,
+        status_code: res.statusCode,
+      });
+      // cacheResponseTimes.push(duration); // Store the response time
+    } else {
+      end({
+        route: req.route ? req.route.path : req.path,
+        method: req.method,
+        status_code: res.statusCode, //
+      });
+    }
   });
   next();
 });
@@ -94,6 +86,11 @@ app.use('/data', dataRouter);
 app.get('/metrics', async (req, res) => {
   res.set('Content-Type', register.contentType);
   res.end(await register.metrics());
+});
+
+// Endpoint to get response times for /cache
+app.get('/cache-response-times', (req, res) => {
+  res.json(cacheResponseTimes);
 });
 
 app.use('/*', (req: Request, res: Response) => {
