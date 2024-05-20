@@ -13,3 +13,5 @@ services:
       POSTGRES_PASSWORD: mypassword
     ports:
         - "5432:5432"
+    volumes:
+      - ./psql-cities-data/world.sql:/docker-entrypoint-initdb.d/world.sql
