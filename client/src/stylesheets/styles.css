@@ -105,4 +105,73 @@ body {
   top: 1043px;
   width: 856px;
 }
+.switch {
+  align-items: center;
+  border-radius: 14px;
+  display: flex;
+  padding: 2px;
+  position: relative;
+  width: 43px;
+}
+
+.switch .ellipse {
+  border-radius: 10px;
+  height: 20px;
+  position: relative;
+  width: 20px;
+}
+
+.switch.selected-true {
+  justify-content: flex-end;
+}
+
+.switch.disabled-true {
+  background-color: var(--black-012);
+}
+
+.switch.selected-false.disabled-false {
+  background-color: var(--black-038);
+}
+
+.switch.selected-true.disabled-false {
+  background-color: #1976d233;
+}
+
+.switch .hover-true {
+  box-shadow: var(--default);
+}
+
+.switch .disabled-0-true {
+  background-color: var(--greylighten-5);
+}
+
+.switch .selected-0-false.disabled-0-false {
+  background-color: var(--shadeswhite);
+}
+
+.switch .selected-0-true.disabled-0-false {
+  background-color: var(--customprimary);
+}
+.input-slot {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  position: relative;
+  width: 302px;
+}
+
+.input-slot .default-slot {
+  color: var(--black-087);
+  font-family: var(--text-body-1-font-family);
+  font-size: var(--text-body-1-font-size);
+  font-style: var(--text-body-1-font-style);
+  font-weight: var(--text-body-1-font-weight);
+  letter-spacing: var(--text-body-1-letter-spacing);
+  line-height: var(--text-body-1-line-height);
+  margin-top: -1px;
+  position: relative;
+  white-space: nowrap;
+  width: fit-content;
+}
+
 
