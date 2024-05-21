@@ -19,9 +19,9 @@ const App: React.FC = () => (
         divClassName='design-component-instance-node'
         text='Cache Switch'
       />
-      <img className='query-select' alt='Query select' src='query-select.png' />
+      <img className='query-select' alt='Query select' src='images/query-select.png' />
       <div className='text-wrapper'>CacheMunk Demo</div>
-      <img className='donut-chart' alt='Donut chart' src='donut-chart-1.png' />
+      <img className='donut-chart' alt='Donut chart' src='images/donut-chart-1.png' />
       <div className='text-wrapper-2'>Hit/Miss Ratio</div>
     </div>
   </div>

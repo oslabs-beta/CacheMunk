@@ -50,7 +50,7 @@ export default {
   ],
   devServer: {
     static: {
-      directory: path.resolve(__dirname, 'dist'),
+      directory: path.resolve(__dirname, 'public'),
       publicPath: '/',
     },
     proxy: [
