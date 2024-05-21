@@ -3,11 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2'; // for rendering bar charts
 import 'chart.js/auto'; // register chart.js components
 
+// defined as functional component type
 const ResponseTimeChart: React.FC = () => {
-  // defined as functional component type
   const [responseTimes, setResponseTimes] = useState<number[]>([]); // state variable initialized to empty array of numbers
 
-  // asynchronous function that fetches response times from specified endpoint
+  // asynchronous function that fetches response times from specified endpoint - comes back as an array of times in milliseconds
   const fetchResponseTimes = async () => {
     try {
       const response = await fetch('http://localhost:3030/cache-response-times');
@@ -21,16 +21,30 @@ const ResponseTimeChart: React.FC = () => {
     }
   };
 
+  // const fetchAndLogResponseTime = async () => {
+  //   try {
+  //     const start = performance.now(); // performance.now method start
+  //     const response = await fetch('http://localhost:3030/data/cache'); // time for this fetch request is measured
+  //     const end = performance.now(); // performance.now method end
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
+  //     const newResponseTime = end - start; // calculate time
+  //     setResponseTimes((prev) => [...prev, newResponseTime]); // adds the new time to the end of the response times array
+  //   } catch (error) {
+  //     console.error('Failed to fetch /cache:', error);
+  //   }
+  // };
+
   const fetchAndLogResponseTime = async () => {
     try {
-      const start = performance.now(); // performance.now method start
-      const response = await fetch('http://localhost:3030/data/cache'); // time for this fetch request is measured
-      const end = performance.now(); // performance.now method end
+      // makes a request to the endpoint that makes a query
+      const response = await fetch('http://localhost:3030/data/cache');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const newResponseTime = end - start; // calculate time
-      setResponseTimes((prev) => [...prev, newResponseTime]); // adds the new time to the end of the response times array
+      // Fetch the updated response times from the backend
+      await fetchResponseTimes();
     } catch (error) {
       console.error('Failed to fetch /cache:', error);
     }
@@ -41,6 +55,7 @@ const ResponseTimeChart: React.FC = () => {
   }, []);
 
   const data = {
+    // creates the labels by mapping over the array, actual value is not used
     labels: responseTimes.map((_, index) => `Request ${index + 1}`),
     datasets: [
       {
@@ -54,9 +69,16 @@ const ResponseTimeChart: React.FC = () => {
   };
 
   const options = {
+    responsive: true,
+    maintainAspectRatio: false,
     scales: {
       y: {
         beginAtZero: true,
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
       },
     },
   };
@@ -64,7 +86,9 @@ const ResponseTimeChart: React.FC = () => {
   return (
     <div>
       <h2>Response Times for /cache Endpoint</h2>
-      <Bar data={data} options={options} />
+      <div style={{ width: '100%', height: '350px' }}>
+        <Bar data={data} options={options} />
+      </div>
       <button onClick={fetchAndLogResponseTime}>Fetch /cache and Update</button>
     </div>
   );
