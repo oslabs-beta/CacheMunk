@@ -1,7 +1,7 @@
-import PropTypes from "prop-types";
-import React from "react";
-import { useReducer } from "react";
-import "./style.css";
+import PropTypes from 'prop-types';
+import React from 'react';
+import { useReducer } from 'react';
+import '../stylesheets/styles.css';
 
 interface Props {
   selected: boolean;
@@ -11,7 +11,13 @@ interface Props {
   ellipseClassName: any;
 }
 
-export const Switch = ({ selected, disabled, hover, className, ellipseClassName }: Props): JSX.Element => {
+export const Switch = ({
+  selected,
+  disabled,
+  hover,
+  className,
+  ellipseClassName,
+}: Props): JSX.Element => {
   const [state, dispatch] = useReducer(reducer, {
     selected: selected || true,
     disabled: disabled,
@@ -23,13 +29,13 @@ export const Switch = ({ selected, disabled, hover, className, ellipseClassName 
     <div
       className={`switch selected-${state.selected} disabled-${state.disabled} ${className}`}
       onMouseLeave={() => {
-        dispatch("mouse_leave");
+        dispatch('mouse_leave');
       }}
       onMouseEnter={() => {
-        dispatch("mouse_enter");
+        dispatch('mouse_enter');
       }}
       onClick={() => {
-        dispatch("click");
+        dispatch('click');
       }}
     >
       <div
@@ -42,7 +48,7 @@ export const Switch = ({ selected, disabled, hover, className, ellipseClassName 
 function reducer(state: any, action: any) {
   if (state.disabled === false && state.hover === true && state.selected === true) {
     switch (action) {
-      case "click":
+      case 'click':
         return {
           disabled: false,
           hover: false,
@@ -53,7 +59,7 @@ function reducer(state: any, action: any) {
 
   if (state.disabled === false && state.hover === true && state.selected === false) {
     switch (action) {
-      case "click":
+      case 'click':
         return {
           disabled: false,
           hover: false,
@@ -63,13 +69,13 @@ function reducer(state: any, action: any) {
   }
 
   switch (action) {
-    case "mouse_enter":
+    case 'mouse_enter':
       return {
         ...state,
         hover: true,
       };
 
-    case "mouse_leave":
+    case 'mouse_leave':
       return {
         ...state,
         hover: false,

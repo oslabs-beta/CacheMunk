@@ -65,7 +65,7 @@ body {
 
 .frame .text-wrapper {
   color: #ffffff;
-  font-family: "Roboto-Regular", Helvetica;
+  font-family: 'Roboto-Regular', Helvetica;
   font-size: 64px;
   font-weight: 400;
   height: 88px;
@@ -87,7 +87,7 @@ body {
 
 .frame .text-wrapper-2 {
   color: #ffffff;
-  font-family: "DM Sans-Bold", Helvetica;
+  font-family: 'DM Sans-Bold', Helvetica;
   font-size: 64px;
   font-weight: 700;
   height: 156px;
@@ -167,5 +167,3 @@ body {
   white-space: nowrap;
   width: fit-content;
 }
-
-

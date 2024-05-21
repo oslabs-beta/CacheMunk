@@ -1,6 +1,6 @@
-import PropTypes from "prop-types";
-import React from "react";
-import "./style.css";
+import PropTypes from 'prop-types';
+import React from 'react';
+import '../stylesheets/styles.css';
 
 interface Props {
   className: any;
@@ -8,7 +8,11 @@ interface Props {
   text: string;
 }
 
-export const InputSlot = ({ className, divClassName, text = "Default Slot" }: Props): JSX.Element => {
+export const InputSlot = ({
+  className,
+  divClassName,
+  text = 'Default Slot',
+}: Props): JSX.Element => {
   return (
     <div className={`input-slot ${className}`}>
       <div className={`default-slot ${divClassName}`}>{text}</div>
