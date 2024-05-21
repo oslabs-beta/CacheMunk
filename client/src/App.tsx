@@ -1,30 +1,28 @@
 import React from 'react';
-import { InputSlot } from './Components/InputSlot';
-import { Switch } from './Components/Switch';
-import './stylesheets/styles.css';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import theme from './theme';
+import Button from '@mui/material/Button';
+import Switch from '@mui/material/Switch';
+import Box from './Components/Box';
 
-const App: React.FC = () => (
-  <div className='frame'>
-    <div className='div'>
-      <img className='image' alt='Image' src='/images/image-1.png' />
-      <Switch
-        className='switch-2'
-        disabled={false}
-        ellipseClassName='switch-instance'
-        selected={false}
-        hover={false}
-      />
-      <InputSlot
-        className='input-slot-instance'
-        divClassName='design-component-instance-node'
-        text='Cache Switch'
-      />
-      <img className='query-select' alt='Query select' src='images/query-select.png' />
-      <div className='text-wrapper'>CacheMunk Demo</div>
-      <img className='donut-chart' alt='Donut chart' src='images/donut-chart-1.png' />
-      <div className='text-wrapper-2'>Hit/Miss Ratio</div>
-    </div>
-  </div>
-);
+const cache = ['test1', 'test2'];
+
+const App: React.FC = () => {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <div>
+        <img className='image' alt='Image' src='/images/image-1.png' />
+        <h1>Hi Cachemunk</h1>
+        <Button className='button' variant='contained' color='primary'>
+          Click Me
+        </Button>
+        <Switch {...cache} defaultChecked />
+        <Box />
+      </div>
+    </ThemeProvider>
+  );
+};
 
 export default App;
