@@ -23,11 +23,11 @@ client.collectDefaultMetrics({ register });
 // Define metrics
 
 // Duration of HTTP Request
-const httpRequestDurationMicroseconds = new client.Histogram({
+const httpRequestDurationMilliseconds = new client.Histogram({
   name: 'http_request_duration_ms',
   help: 'Duration of HTTP requests in ms',
   labelNames: ['method', 'route', 'status_code'],
-  buckets: [50, 100, 200, 300, 400, 500, 1000], // buckets for response time
+  buckets: [0.5, 1, 5, 10, 25, 50, 100], // adjusted buckets for response time
 });
 
 // Cache Hits
@@ -43,7 +43,7 @@ const cacheMisses = new client.Counter({
 });
 
 // Register the metrics
-register.registerMetric(httpRequestDurationMicroseconds);
+register.registerMetric(httpRequestDurationMilliseconds);
 register.registerMetric(cacheHits);
 register.registerMetric(cacheMisses);
 
@@ -52,34 +52,49 @@ const cacheResponseTimes: number[] = [];
 
 // Middleware to collect response time
 app.use((req, res, next) => {
-  const end = httpRequestDurationMicroseconds.startTimer();
+  // Start the timer using the Prometheus client's startTimer function - records in seconds
+  const end = httpRequestDurationMilliseconds.startTimer();
+
+  // Register an event listener for the "finish" event of the response
   res.on('finish', () => {
-    if (req.originalUrl === '/cache') {
-      const duration = end({
-        route: req.route ? req.route.path : req.path,
-        method: req.method,
-        status_code: res.statusCode,
-      });
-      // cacheResponseTimes.push(duration); // Store the response time
+    // Use an object to store labels for the Prometheus histogram
+    const labels = {
+      route: req.route ? req.route.path : req.path, // Use the route path or path if route is not available
+      method: req.method, // HTTP method used for the request
+      status_code: res.statusCode, // HTTP status code of the response
+    };
+
+    // Check if the URL starts with "/data" to determine if this is a database request
+    if (req.originalUrl.startsWith('/data')) {
+      // End the timer, convert the duration to milliseconds, and record for database-related requests
+      const durationInSeconds = end(labels); // Stop the timer and get duration in seconds
+      const durationInMilliseconds = durationInSeconds * 1000; // Convert duration to milliseconds
+      httpRequestDurationMilliseconds.observe(labels, durationInMilliseconds); // Record the duration in milliseconds
+      cacheResponseTimes.push(durationInMilliseconds); // Optionally store the response time in an array
+      console.log('Cache Response Times Array:', cacheResponseTimes); // Logging the array for debugging
     } else {
-      end({
-        route: req.route ? req.route.path : req.path,
-        method: req.method,
-        status_code: res.statusCode, //
-      });
+      // End the timer for non-database requests but don't push to the array, convert and record
+      const durationInSeconds = end(labels);
+      const durationInMilliseconds = durationInSeconds * 1000; // Convert duration to milliseconds
+      httpRequestDurationMilliseconds.observe(labels, durationInMilliseconds); // Record the duration in milliseconds
     }
   });
+
+  // Proceed to the next middleware function
   next();
 });
 
+//
 // Export the metrics for use in other files
 export { cacheHits, cacheMisses };
 
+// simple health check route
 app.get('/ping', (req: Request, res: Response) => {
   console.log('received ping');
   res.json('pong');
 });
 
+// route for all database requests
 app.use('/data', dataRouter);
 
 // set metrics endpoint for prometheus

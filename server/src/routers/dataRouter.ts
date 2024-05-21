@@ -7,7 +7,7 @@ const cache = new Map<string, any>(); // simple cache using a Map
 
 router.get('/cache', async (req: Request, res: Response) => {
   const queryKey = req.url; // Use the request URL as the cache key
-  const query = 'SELECT * FROM public.films ORDER BY _id ASC LIMIT 100';
+  const query = 'SELECT * from cities ORDER BY id ASC LIMIT 100';
 
   if (cache.has(queryKey)) {
     cacheHits.inc(); // Increment cache hits metric
@@ -32,7 +32,7 @@ router.get('/cache', async (req: Request, res: Response) => {
 });
 
 router.get('/nocache', async (req: Request, res: Response) => {
-  const query = 'SELECT * FROM public.films ORDER BY _id ASC LIMIT 100';
+  const query = 'SELECT * from cities ORDER BY id ASC LIMIT 100';
 
   try {
     const client = await pool.connect();
