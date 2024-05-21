@@ -14,7 +14,7 @@ body {
   width: 100%;
 }
 
-.frame .div-2 {
+.frame .div {
   background-color: #031033;
   height: 2148px;
   position: relative;
@@ -44,12 +44,6 @@ body {
   background-color: #ffffff !important;
 }
 
-.frame .table-instance {
-  left: 198px !important;
-  position: absolute !important;
-  top: 602px !important;
-}
-
 .frame .input-slot-instance {
   height: 24px !important;
   left: 705px !important;
@@ -57,7 +51,7 @@ body {
   top: 403px !important;
 }
 
-.frame .input-slot-2 {
+.frame .design-component-instance-node {
   color: #fffbfbde !important;
 }
 
@@ -69,7 +63,7 @@ body {
   width: 1066px;
 }
 
-.frame .text-wrapper-3 {
+.frame .text-wrapper {
   color: #ffffff;
   font-family: "Roboto-Regular", Helvetica;
   font-size: 64px;
@@ -91,7 +85,7 @@ body {
   width: 856px;
 }
 
-.frame .text-wrapper-4 {
+.frame .text-wrapper-2 {
   color: #ffffff;
   font-family: "DM Sans-Bold", Helvetica;
   font-size: 64px;
