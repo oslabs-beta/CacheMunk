@@ -69,9 +69,16 @@ const ResponseTimeChart: React.FC = () => {
   };
 
   const options = {
+    responsive: true,
+    maintainAspectRatio: false,
     scales: {
       y: {
         beginAtZero: true,
+      },
+    },
+    plugins: {
+      legend: {
+        display: true,
       },
     },
   };
@@ -79,7 +86,9 @@ const ResponseTimeChart: React.FC = () => {
   return (
     <div>
       <h2>Response Times for /cache Endpoint</h2>
-      <Bar data={data} options={options} />
+      <div style={{ width: '100%', height: '350px' }}>
+        <Bar data={data} options={options} />
+      </div>
       <button onClick={fetchAndLogResponseTime}>Fetch /cache and Update</button>
     </div>
   );

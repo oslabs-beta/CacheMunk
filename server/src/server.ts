@@ -20,7 +20,7 @@ const register = new client.Registry();
 // default metrics i
 client.collectDefaultMetrics({ register });
 
-// Define metrics
+// Define metrics for prometheus
 
 // Duration of HTTP Request
 const httpRequestDurationMilliseconds = new client.Histogram({
