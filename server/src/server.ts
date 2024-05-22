@@ -1,5 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dataRouter from './routers/dataRouter.js';
+import { getCacheInfo, getCacheResponseTimes } from './analytics.js';
 
 const app = express();
 
@@ -9,27 +10,20 @@ const PORT = 3030;
 // express middleware that parses JSON bodies
 app.use(express.json());
 
-// Array to store response times
-const cacheResponseTimes: number[] = [];
-const cacheInfo = {
-  cacheHits: 0,
-  cacheMisses: 0,
-};
 
-export const incrCacheHits = (): void => { cacheInfo.cacheHits++ };
-export const incrCacheMisses = (): void => { cacheInfo.cacheMisses++ };
-export const addResponse = (execTime: number): void => { cacheResponseTimes.push(execTime) };
 
 // route for all database requests
 app.use('/data', dataRouter);
 
 // Endpoint to get cache-analytics
 app.get('/cache-analytics', (req, res) => {
+  const cacheInfo = getCacheInfo();
   res.json(cacheInfo);
 })
 
 // Endpoint to get response times for /cache
 app.get('/cache-response-times', (req, res) => {
+  const cacheResponseTimes = getCacheResponseTimes();
   res.json(cacheResponseTimes);
 });
 

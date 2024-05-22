@@ -18,12 +18,10 @@ const pool = new Pool({
   port: PG_PORT ? parseInt(PG_PORT) : 5432,
 });
 
-export const query = async (text: string, params?: string[]): Promise<[pg.QueryResult, number]> => {
-  const start = process.hrtime.bigint();
+export const query = async (text: string, params?: (string | number | boolean)[]): Promise<pg.QueryResult> => {
   const result = await pool.query(text, params);
-  const end = process.hrtime.bigint();
-  const execTime = Number(end - start) / 1_000_000;
+
   // eslint-disable-next-line no-console
-  console.log(`query ${text} executed in ${execTime.toFixed(3)} ms`);
-  return [result, execTime];
+  console.log(`query ${text} executed`);
+  return result;
 };

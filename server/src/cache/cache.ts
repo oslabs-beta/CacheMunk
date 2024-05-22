@@ -102,19 +102,21 @@ export const configureCache = (options: Config) => {
   async function invalidate(dependency: string) {
     const start = process.hrtime.bigint();
 
-    const queriesToInvalidate = await redis.smembers(dependency);
+    const dependencyKey = `dependency:${dependency}`;
+
+    const queriesToInvalidate = await redis.smembers(dependencyKey);
 
     if (queriesToInvalidate.length > 0) {
       // Create a pipeline to batch multiple operations
       const pipeline = redis.multi();
 
       queriesToInvalidate.forEach((queryKey) => pipeline.del(queryKey));
-      pipeline.del(dependency);
+      pipeline.del(dependencyKey);
 
       await pipeline.exec();
     } else {
       // Clear the dependency set if it's the only key
-      await redis.del(dependency);
+      await redis.del(dependencyKey);
     }
 
     const end = process.hrtime.bigint();
