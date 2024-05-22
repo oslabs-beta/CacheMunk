@@ -28,7 +28,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
     }
   };
 
-  const handleClick = () => {
+  const handleClick = async () => {
     console.log('Cache Switch:', cacheSwitch);
     console.log('Query Select:', querySelect);
     showNotification();
@@ -37,16 +37,29 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
     let method: 'GET' | 'POST' = 'GET'; // default method will be POST
 
     if (querySelect === 'insert') {
-      endpoint = 'test/insert';
+      endpoint = 'http://localhost:3030/test/insert';
       method = 'POST';
     } else if (querySelect === 'select' && cacheSwitch) {
-      endpoint = 'test/select-cache';
+      endpoint = 'http://localhost:3030/test/select-cache';
     } else if (querySelect === 'select' && !cacheSwitch) {
-      endpoint = 'test/select-no-cache';
+      endpoint = 'http://localhost:3030/test/select-no-cache';
     } else if (querySelect === 'costly' && cacheSwitch) {
-      endpoint = 'test/costly-cache';
+      endpoint = 'http://localhost:3030/test/costly-cache';
     } else if (querySelect === 'costly' && !cacheSwitch) {
-      endpoint = 'test/costly-no-cache';
+      endpoint = 'http://localhost:3030/test/costly-no-cache';
+    }
+
+    try {
+      const response = await fetch(endpoint, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const data = await response.json();
+      console.log('Response:', data);
+    } catch (error) {
+      console.error('Error fetching data:', error);
     }
 
     if (onClick) {
