@@ -19,6 +19,11 @@ const App: React.FC = () => {
   //QueryDropown state
   const [querySelect, setQuerySelect] = useState<string>('');
 
+  const [cacheHits, setCacheHits] = useState<number>(0);
+  const [cacheMisses, setCacheMisses] = useState<number>(0);
+  const [responseTime, setResponseTime] = useState<number[]>([]);
+  const [queryResult, setQueryResult] = useState<any>({});
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -36,7 +41,18 @@ const App: React.FC = () => {
           <Box padding={2} width='50%'>
             <QueryBox querySelect={querySelect} setQuerySelect={setQuerySelect} />
           </Box>
-          <SubmitButton cacheSwitch={cacheSwitch} querySelect={querySelect} />
+          <SubmitButton
+            cacheSwitch={cacheSwitch}
+            querySelect={querySelect}
+            cacheHits={cacheHits}
+            setCacheHits={setCacheHits}
+            cacheMisses={cacheMisses}
+            setCacheMisses={setCacheMisses}
+            responseTime={responseTime}
+            setResponseTime={setResponseTime}
+            queryResult={queryResult}
+            setQueryResult={setQueryResult}
+          />
         </Box>
         <ResponseTimeChartDummy />
         <CacheMetricsChartDummy />

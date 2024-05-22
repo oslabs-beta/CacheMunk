@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@mui/material';
 
 interface SubmitButtonProps {
@@ -7,11 +7,27 @@ interface SubmitButtonProps {
   label?: string;
   onClick?: () => void;
   disabled?: boolean;
+  cacheHits: number;
+  cacheMisses: number;
+  responseTime: number[];
+  queryResult: any;
+  setCacheHits: React.Dispatch<React.SetStateAction<number>>;
+  setCacheMisses: React.Dispatch<React.SetStateAction<number>>;
+  setResponseTime: React.Dispatch<React.SetStateAction<number[]>>;
+  setQueryResult: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const SubmitButton: React.FC<SubmitButtonProps> = ({
   cacheSwitch,
   querySelect,
+  cacheHits,
+  cacheMisses,
+  responseTime,
+  queryResult,
+  setCacheHits,
+  setCacheMisses,
+  setResponseTime,
+  setQueryResult,
   label = 'Submit',
   onClick,
   disabled = false,
@@ -28,6 +44,20 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
     }
   };
 
+  const fetchChartData = async () => {
+    try {
+      const cacheHitMissReponse = await fetch('http://localhost:3030/test/cache-analytics'); // fetches from endpoint
+      const cacheHitMissData = await cacheHitMissReponse.json(); // converts to Javascript object
+      setCacheHits(cacheHitMissData.cacheHits); // uses key to retrieve value and set state
+      setCacheMisses(cacheHitMissData.cacheMisses);
+      const responseTimeResponse = await fetch('http://localhost:3030/test/cache-response-times');
+      const responseTimeData = await responseTimeResponse.json();
+      setResponseTime(responseTimeData);
+    } catch (error) {
+      console.error('Error fetching Chart Data:', error);
+    }
+  };
+
   const handleClick = async () => {
     console.log('Cache Switch:', cacheSwitch);
     console.log('Query Select:', querySelect);
@@ -36,17 +66,25 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
     let endpoint = ''; // initialize endpoint to empty string
     let method: 'GET' | 'POST' = 'GET'; // default method will be POST
 
-    if (querySelect === 'insert') {
-      endpoint = 'http://localhost:3030/test/insert';
-      method = 'POST';
-    } else if (querySelect === 'select' && cacheSwitch) {
-      endpoint = 'http://localhost:3030/test/select-cache';
-    } else if (querySelect === 'select' && !cacheSwitch) {
-      endpoint = 'http://localhost:3030/test/select-no-cache';
-    } else if (querySelect === 'costly' && cacheSwitch) {
-      endpoint = 'http://localhost:3030/test/costly-cache';
-    } else if (querySelect === 'costly' && !cacheSwitch) {
-      endpoint = 'http://localhost:3030/test/costly-no-cache';
+    switch (querySelect) {
+      case 'insert':
+        endpoint = 'http://localhost:3030/test/insert';
+        method = 'POST';
+        break;
+      case 'select':
+        endpoint = cacheSwitch
+          ? 'http://localhost:3030/test/select-cache'
+          : 'http://localhost:3030/test/select-no-cache';
+        break;
+      case 'costly':
+        endpoint = cacheSwitch
+          ? 'http://localhost:3030/test/costly-cache'
+          : 'http://localhost:3030/test/costly-no-cache';
+        break;
+      default:
+        // Handle unexpected querySelect values if necessary
+        endpoint = 'http://localhost:3030/test/initial';
+        break;
     }
 
     try {
@@ -58,9 +96,13 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
       });
       const data = await response.json();
       console.log('Response:', data);
+      setQueryResult(data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
+
+    // fetch Chart Data
+    fetchChartData();
 
     if (onClick) {
       onClick();

@@ -26,23 +26,42 @@ app.get('/ping', (req: Request, res: Response) => {
 app.use('/data', dataRouter);
 
 app.post('/test/insert', (req, res) => {
-  res.send('Endpoint: test/insert - QuerySelect: insert');
+  res.json('Endpoint: test/insert - QuerySelect: insert');
 });
 
 app.get('/test/select-cache', (req, res) => {
-  res.send('Endpoint: test/select-cache - QuerySelect: select, CacheSwitch: true');
+  res.json('Endpoint: test/select-cache - QuerySelect: select, CacheSwitch: true');
 });
 
 app.get('/test/select-no-cache', (req, res) => {
-  res.send('Endpoint: test/select-no-cache - QuerySelect: select, CacheSwitch: false');
+  res.json('Endpoint: test/select-no-cache - QuerySelect: select, CacheSwitch: false');
 });
 
 app.get('/test/costly-cache', (req, res) => {
-  res.send('Endpoint: test/costly-cache - QuerySelect: costly, CacheSwitch: true');
+  res.json('Endpoint: test/costly-cache - QuerySelect: costly, CacheSwitch: true');
 });
 
 app.get('/test/costly-no-cache', (req, res) => {
-  res.send('Endpoint: test/costly-no-cache - QuerySelect: costly, CacheSwitch: false');
+  res.json('Endpoint: test/costly-no-cache - QuerySelect: costly, CacheSwitch: false');
+});
+
+app.get('/test/initial', (req, res) => {
+  res.json('Endpoint: /test/initial - initial test');
+});
+
+// First endpoint: /test/cache-analytics
+app.get('/test/cache-analytics', (req, res) => {
+  const cacheAnalytics = {
+    cacheHits: 3,
+    cacheMisses: 4,
+  };
+  res.json(cacheAnalytics);
+});
+
+// Second endpoint: /test/cache-response-times
+app.get('/test/cache-response-times', (req, res) => {
+  const responseTimes = [13, 3, 4, 5];
+  res.json(responseTimes);
 });
 
 app.use('/*', (req: Request, res: Response) => {
