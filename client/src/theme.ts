@@ -12,7 +12,7 @@ const theme = createTheme({
     },
     background: {
       default: '#031033', // Dark background for the entire application
-      paper: '#1e1e1e', // Dark background for components such as cards, sheets
+      paper: '#041a4d', // Dark background for components such as cards, sheets
     },
     text: {
       primary: '#ffffff', // Light color text for better readability on dark backgrounds
