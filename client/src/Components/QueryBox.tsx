@@ -5,11 +5,14 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
-export default function BasicSelect() {
-  const [age, setAge] = React.useState('');
+interface QueryBoxProps {
+  querySelect: string;
+  setQuerySelect: (newString: string) => void;
+}
 
+const BasicSelect: React.FC<QueryBoxProps> = ({ querySelect, setQuerySelect }) => {
   const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value as string);
+    setQuerySelect(event.target.value as string);
   };
 
   return (
@@ -19,15 +22,17 @@ export default function BasicSelect() {
         <Select
           labelId='demo-simple-select-label'
           id='demo-simple-select'
-          value={age}
+          value={querySelect}
           label='Query Type'
           onChange={handleChange}
         >
-          <MenuItem value={10}>Insert Query</MenuItem>
-          <MenuItem value={20}>Select Query</MenuItem>
-          <MenuItem value={30}>Costly Select Query</MenuItem>
+          <MenuItem value={'insert'}>Insert Query</MenuItem>
+          <MenuItem value={'select'}>Select Query</MenuItem>
+          <MenuItem value={'costly'}>Costly Select Query</MenuItem>
         </Select>
       </FormControl>
     </Box>
   );
-}
+};
+
+export default BasicSelect;
