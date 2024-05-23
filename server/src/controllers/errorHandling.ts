@@ -8,7 +8,7 @@ import { Request, Response, NextFunction } from 'express';
  * @returns A function that takes Express's req, res, and next parameters.
  */
 export function asyncWrapper(fn: (req: Request, res: Response, next: NextFunction) => Promise<void>) {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, res: Response, next: NextFunction): void => {
     fn(req, res, next).catch((err: unknown) => { next(err) });
   };
 }

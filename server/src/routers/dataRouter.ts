@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import cacheRouter from './cacheRouter.js';
 import noCacheRouter from './no-cacheRouter.js';
-import { insertCity } from './insertCity.js';
+import { insertCity } from '../controllers/insertCity.js';
 
 const router = Router();
 
