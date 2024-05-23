@@ -16,7 +16,7 @@ const theme = createTheme({
     },
     text: {
       primary: '#ffffff', // Light color text for better readability on dark backgrounds
-      secondary: '#b3b3b3', // Slightly muted text color for secondary text
+      secondary: '#f5edf7', // Slightly muted text color for secondary text
     },
   },
 });
