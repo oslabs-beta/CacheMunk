@@ -4,16 +4,16 @@ import CssBaseline from '@mui/material/CssBaseline';
 import theme from './theme';
 import Button from '@mui/material/Button';
 import Switch from '@mui/material/Switch';
-import QueryBox from './Components/QueryBox';
-import Header from './Components/Header';
-import SubmitButton from './Components/SubmitButton';
+import QueryBox from './components/QueryBox';
+import Header from './components/Header';
+import SubmitButton from './components/SubmitButton';
 import Box from '@mui/material/Box';
-import CacheSwitch from './Components/CacheSwitch';
-import ResponseTimeChartDummy from './Components/ResponseTimeChartDummy';
-import CacheMetricsChartDummy from './Components/CacheMetricsChartDummy';
-import QueryResultBox from './Components/QueryResultBox';
-import CacheMetricsChart from './Components/CacheMetricsChart';
-import ResponseTimeChart from './Components/ResponseTimeChart';
+import CacheSwitch from './components/CacheSwitch';
+import ResponseTimeChartDummy from './components/ResponseTimeChartDummy';
+import CacheMetricsChartDummy from './components/CacheMetricsChartDummy';
+import QueryResultBox from './components/QueryResultBox';
+import CacheMetricsChart from './components/CacheMetricsChart';
+import ResponseTimeChart from './components/ResponseTimeChart';
 
 const App: React.FC = () => {
   //State to manage the cache switch is on or off
@@ -59,7 +59,7 @@ const App: React.FC = () => {
         </Box>
         <ResponseTimeChart responseTimes={responseTimes} />
         <CacheMetricsChart cacheHits={cacheHits} cacheMisses={cacheMisses} />
-        <QueryResultBox queryresult={queryResult} />
+        {/* <QueryResultBox queryresult={queryResult} /> */}
       </div>
     </ThemeProvider>
   );

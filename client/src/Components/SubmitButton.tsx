@@ -46,11 +46,11 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
 
   const fetchChartData = async () => {
     try {
-      const cacheHitMissReponse = await fetch('/test/cache-analytics'); // fetches from endpoint
+      const cacheHitMissReponse = await fetch('/cache-analytics'); // fetches from endpoint
       const cacheHitMissData = await cacheHitMissReponse.json(); // converts to Javascript object
       setCacheHits(cacheHitMissData.cacheHits); // uses key to retrieve value and set state
       setCacheMisses(cacheHitMissData.cacheMisses);
-      const responseTimesResponse = await fetch('/test/cache-response-times');
+      const responseTimesResponse = await fetch('/cache-response-times');
       const responseTimesData = await responseTimesResponse.json();
       setResponseTimes(responseTimesData);
     } catch (error) {
@@ -68,18 +68,17 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
 
     switch (querySelect) {
       case 'insert':
-        endpoint = '/test/insert';
+        endpoint = '/data/cities';
         method = 'POST';
         break;
       case 'select':
-        endpoint = cacheSwitch ? '/test/select-cache' : '/test/select-no-cache';
+        endpoint = cacheSwitch ? '/data/cache' : '/data/no-cache';
         break;
       case 'costly':
-        endpoint = cacheSwitch ? '/test/costly-cache' : '/test/costly-no-cache';
+        endpoint = cacheSwitch ? '/data/cache/costly' : '/data/no-cache/costly';
         break;
       default:
         // Handle unexpected querySelect values if necessary
-        endpoint = '/test/initial';
         break;
     }
 
