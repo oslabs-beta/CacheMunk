@@ -47,7 +47,7 @@ const QueryResultBox: React.FC<QueryResultProps> = ({ queryresult }) => (
             width: '100%',
           }}
         >
-          <Typography variant="body1" color="textSecondary" component="span">
+          <Typography variant="body1" color="black" component="span">
             {queryresult ? JSON.stringify(queryresult, null, 2) : 'No data available'}
           </Typography>
         </pre>
