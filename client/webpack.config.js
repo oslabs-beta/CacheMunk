@@ -50,12 +50,12 @@ export default {
   ],
   devServer: {
     static: {
-      directory: path.resolve(__dirname, 'dist'),
+      directory: path.resolve(__dirname, 'public'),
       publicPath: '/',
     },
     proxy: [
       {
-        context: ['/api'],
+        context: ['/data', '/test', '/cache-analytics', '/cache-response-times'],
         target: 'http://localhost:3030',
       },
     ],
