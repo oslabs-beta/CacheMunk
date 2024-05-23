@@ -46,11 +46,11 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
 
   const fetchChartData = async () => {
     try {
-      const cacheHitMissReponse = await fetch('http://localhost:3030/test/cache-analytics'); // fetches from endpoint
+      const cacheHitMissReponse = await fetch('/test/cache-analytics'); // fetches from endpoint
       const cacheHitMissData = await cacheHitMissReponse.json(); // converts to Javascript object
       setCacheHits(cacheHitMissData.cacheHits); // uses key to retrieve value and set state
       setCacheMisses(cacheHitMissData.cacheMisses);
-      const responseTimesResponse = await fetch('http://localhost:3030/test/cache-response-times');
+      const responseTimesResponse = await fetch('/test/cache-response-times');
       const responseTimesData = await responseTimesResponse.json();
       setResponseTimes(responseTimesData);
     } catch (error) {
@@ -68,22 +68,18 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
 
     switch (querySelect) {
       case 'insert':
-        endpoint = 'http://localhost:3030/test/insert';
+        endpoint = '/test/insert';
         method = 'POST';
         break;
       case 'select':
-        endpoint = cacheSwitch
-          ? 'http://localhost:3030/test/select-cache'
-          : 'http://localhost:3030/test/select-no-cache';
+        endpoint = cacheSwitch ? '/test/select-cache' : '/test/select-no-cache';
         break;
       case 'costly':
-        endpoint = cacheSwitch
-          ? 'http://localhost:3030/test/costly-cache'
-          : 'http://localhost:3030/test/costly-no-cache';
+        endpoint = cacheSwitch ? '/test/costly-cache' : '/test/costly-no-cache';
         break;
       default:
         // Handle unexpected querySelect values if necessary
-        endpoint = 'http://localhost:3030/test/initial';
+        endpoint = '/test/initial';
         break;
     }
 

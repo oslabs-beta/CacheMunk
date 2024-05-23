@@ -59,7 +59,7 @@ const App: React.FC = () => {
         </Box>
         <ResponseTimeChart responseTimes={responseTimes} />
         <CacheMetricsChart cacheHits={cacheHits} cacheMisses={cacheMisses} />
-        <QueryResultBox queryresult={queryResult}/>
+        <QueryResultBox queryresult={queryResult} />
       </div>
     </ThemeProvider>
   );

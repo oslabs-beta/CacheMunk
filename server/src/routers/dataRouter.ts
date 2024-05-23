@@ -1,21 +1,18 @@
 import { Router, Request, Response } from 'express';
+import cacheRouter from './cacheRouter.js';
+import noCacheRouter from './no-cacheRouter.js';
+import { insertCity } from './insertCity.js';
 
 const router = Router();
 
-router.get('/cache', (req: Request, res: Response) => {
-  res.status(200).send('read with cache');
-});
+router.use('/cache', cacheRouter);
 
-router.get('/nocache', (req: Request, res: Response) => {
-  res.status(200).send('read without cache');
-});
+router.use('/no-cache', noCacheRouter);
 
-router.patch('/cache', (req: Request, res: Response) => {
-  res.status(201).send('patch with cache');
-});
-
-router.patch('/nocache', (req: Request, res: Response) => {
-  res.status(201).send('patch without cache');
+router.post('/cities', insertCity, (req: Request, res: Response) => {
+  // invalidate the cache based on specified dependencies
+  // make insert query to the SQL database
+  res.status(201).send('city inserted in db?');
 });
 
 export default router;
