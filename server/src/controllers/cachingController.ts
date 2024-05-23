@@ -1,25 +1,16 @@
-import { SELECT_CITIES } from '../queries/queries.js';
+import { queriesMap, dependenciesMap } from '../queries/queriesMap.js';
 import { query } from '../db.js';
 import type pg from 'pg';
 
 import { incrCacheHits, incrCacheMisses, addResponse } from '../analytics.js';
 import cache from '../cache/redisClient.js';
 
-
-const queries: Record<string, string> = {
-  'SELECT_CITIES': SELECT_CITIES
-}
-
-const dependenciesMap: Record<string, string[]> = {
-  'SELECT_CITIES': ['cities'],
-}
-
-const calcExecTime = (start: bigint, end: bigint) => Number(end - start) / 1_000_000;
-
-export const getData = async (queryKey: 'SELECT_CITIES'): Promise<{ query: string, rows: pg.QueryResultRow}> => {
+export const getData = async (queryKey: string): Promise<{ query: string, rows: pg.QueryResultRow}> => {
+  const calcExecTime = (start: bigint, end: bigint) => Number(end - start) / 1_000_000;
+  
   const t0 = process.hrtime.bigint();
 
-  const queryText = queries[queryKey];
+  const queryText = queriesMap[queryKey];
   const cachedResult = await cache.get(queryKey);
 
   if (cachedResult) {
