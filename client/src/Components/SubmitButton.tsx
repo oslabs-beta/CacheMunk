@@ -9,11 +9,11 @@ interface SubmitButtonProps {
   disabled?: boolean;
   cacheHits: number;
   cacheMisses: number;
-  responseTime: number[];
+  responseTimes: number[];
   queryResult: any;
   setCacheHits: React.Dispatch<React.SetStateAction<number>>;
   setCacheMisses: React.Dispatch<React.SetStateAction<number>>;
-  setResponseTime: React.Dispatch<React.SetStateAction<number[]>>;
+  setResponseTimes: React.Dispatch<React.SetStateAction<number[]>>;
   setQueryResult: React.Dispatch<React.SetStateAction<any>>;
 }
 
@@ -22,11 +22,11 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
   querySelect,
   cacheHits,
   cacheMisses,
-  responseTime,
+  responseTimes,
   queryResult,
   setCacheHits,
   setCacheMisses,
-  setResponseTime,
+  setResponseTimes,
   setQueryResult,
   label = 'Submit',
   onClick,
@@ -50,9 +50,9 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
       const cacheHitMissData = await cacheHitMissReponse.json(); // converts to Javascript object
       setCacheHits(cacheHitMissData.cacheHits); // uses key to retrieve value and set state
       setCacheMisses(cacheHitMissData.cacheMisses);
-      const responseTimeResponse = await fetch('http://localhost:3030/test/cache-response-times');
-      const responseTimeData = await responseTimeResponse.json();
-      setResponseTime(responseTimeData);
+      const responseTimesResponse = await fetch('http://localhost:3030/test/cache-response-times');
+      const responseTimesData = await responseTimesResponse.json();
+      setResponseTimes(responseTimesData);
     } catch (error) {
       console.error('Error fetching Chart Data:', error);
     }

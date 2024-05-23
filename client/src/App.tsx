@@ -11,6 +11,9 @@ import Box from '@mui/material/Box';
 import CacheSwitch from './Components/CacheSwitch';
 import ResponseTimeChartDummy from './Components/ResponseTimeChartDummy';
 import CacheMetricsChartDummy from './Components/CacheMetricsChartDummy';
+import QueryResultBox from './Components/QueryResultBox';
+import CacheMetricsChart from './Components/CacheMetricsChart';
+import ResponseTimeChart from './Components/ResponseTimeChart';
 
 const App: React.FC = () => {
   //State to manage the cache switch is on or off
@@ -21,7 +24,7 @@ const App: React.FC = () => {
 
   const [cacheHits, setCacheHits] = useState<number>(0);
   const [cacheMisses, setCacheMisses] = useState<number>(0);
-  const [responseTime, setResponseTime] = useState<number[]>([]);
+  const [responseTimes, setResponseTimes] = useState<number[]>([]);
   const [queryResult, setQueryResult] = useState<any>({});
 
   return (
@@ -48,14 +51,15 @@ const App: React.FC = () => {
             setCacheHits={setCacheHits}
             cacheMisses={cacheMisses}
             setCacheMisses={setCacheMisses}
-            responseTime={responseTime}
-            setResponseTime={setResponseTime}
+            responseTimes={responseTimes}
+            setResponseTimes={setResponseTimes}
             queryResult={queryResult}
             setQueryResult={setQueryResult}
           />
         </Box>
-        <ResponseTimeChartDummy />
-        <CacheMetricsChartDummy />
+        <ResponseTimeChart responseTimes={responseTimes} />
+        <CacheMetricsChart cacheHits={cacheHits} cacheMisses={cacheMisses} />
+        <QueryResultBox queryresult={queryResult}/>
       </div>
     </ThemeProvider>
   );

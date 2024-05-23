@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 
-const ResponseTimeChart: React.FC = () => {
-  const fetchAndLogResponseTime = () => {
-    console.log('Fetch /cache and Update button clicked');
-    // Dummy function to simulate fetch logic
-  };
+interface QueryResultProps {
+  queryresult: any;
+}
 
+const QueryResultBox: React.FC<QueryResultProps> = ({ queryresult }) => {
   return (
     <Box
       display='flex'
@@ -20,7 +19,7 @@ const ResponseTimeChart: React.FC = () => {
       height='350px'
     >
       <Typography variant='h6' gutterBottom>
-        Response Times for /cache Endpoint
+        Query Result
       </Typography>
       <Box
         display='flex'
@@ -30,21 +29,16 @@ const ResponseTimeChart: React.FC = () => {
         borderColor='grey.300'
         width='100%'
         height='100%'
+        style={{
+          backgroundColor: 'white', // Set background color to white
+        }}
       >
         <Typography variant='body1' color='textSecondary'>
-          Chart will be displayed here
+          {JSON.stringify(queryresult, null, 2) || 'No data available'}
         </Typography>
       </Box>
-      <Button
-        variant='contained'
-        color='primary'
-        onClick={fetchAndLogResponseTime}
-        style={{ marginTop: 16 }}
-      >
-        Fetch /cache and Update
-      </Button>
     </Box>
   );
 };
 
-export default ResponseTimeChart;
+export default QueryResultBox;
