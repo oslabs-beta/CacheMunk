@@ -12,7 +12,7 @@ router.use('/no-cache', noCacheRouter);
 router.post('/cities', insertCity, (req: Request, res: Response) => {
   // invalidate the cache based on specified dependencies
   // make insert query to the SQL database
-  res.status(201).send('city inserted in db?');
+  res.status(201).json({ message: 'city inserted in db' });
 });
 
 export default router;
