@@ -7,11 +7,18 @@ const cacheInfo = {
   cacheMisses: 0,
 };
 
-export const addResponse = (execTime: number): void => { cacheResponseTimes.push(execTime) };
+export const addResponse = (execTime: number): void => {
+  cacheResponseTimes.push(execTime);
+};
 
-export const incrCacheHits = (): void => { cacheInfo.cacheHits++ };
-export const incrCacheMisses = (): void => { cacheInfo.cacheMisses++ };
+export const incrCacheHits = (): void => {
+  cacheInfo.cacheHits++;
+};
+
+export const incrCacheMisses = (): void => {
+  cacheInfo.cacheMisses++;
+};
 
 export const getCacheInfo = () => cacheInfo;
 
-export const getCacheResponseTimes = () => cacheResponseTimes;
+export const getCacheResponseTimes = (): number[] => cacheResponseTimes;

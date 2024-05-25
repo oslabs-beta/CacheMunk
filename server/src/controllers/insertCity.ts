@@ -5,17 +5,17 @@ import { query } from '../db.js';
 
 export const insertCity = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
   const city = {
-    "name": "Aalphabet City",
-    "state_id": 1452,
-    "state_code": "NY",
-    "country_id": 233,
-    "country_code": "US",
-    "latitude": "43.80923000",
-    "longitude": "-76.02409000",
-    "created_at": "2019-10-06T01:01:43.000Z",
-    "updated_at": "2019-10-06T01:01:43.000Z",
-    "flag": true,
-    "wikidataid": "Q2417063",
+    name: 'Aalphabet City',
+    state_id: 1452,
+    state_code: 'NY',
+    country_id: 233,
+    country_code: 'US',
+    latitude: '43.80923000',
+    longitude: '-76.02409000',
+    created_at: '2019-10-06T01:01:43.000Z',
+    updated_at: '2019-10-06T01:01:43.000Z',
+    flag: true,
+    wikidataid: 'Q2417063',
   };
 
   const queryText = `
@@ -28,9 +28,17 @@ export const insertCity = asyncWrapper(async (req: Request, res: Response, next:
   `;
 
   const values = [
-    city.name, city.state_id, city.state_code, city.country_id, city.country_code,
-    city.latitude, city.longitude, city.created_at, city.updated_at, city.flag,
-    city.wikidataid
+    city.name,
+    city.state_id,
+    city.state_code,
+    city.country_id,
+    city.country_code,
+    city.latitude,
+    city.longitude,
+    city.created_at,
+    city.updated_at,
+    city.flag,
+    city.wikidataid,
   ];
 
   try {
@@ -43,6 +51,6 @@ export const insertCity = asyncWrapper(async (req: Request, res: Response, next:
   } catch (err) {
     console.log(err);
   }
-  
+
   next();
 });

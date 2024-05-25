@@ -10,9 +10,9 @@ const calcExecTime = (start: bigint, end: bigint) => Number(end - start) / 1_000
 
 const getCities = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
   const queryText = SELECT_CITIES;
-  const t0 = process.hrtime.bigint()
+  const t0 = process.hrtime.bigint();
   const result = await query(queryText);
-  const t1 = process.hrtime.bigint()
+  const t1 = process.hrtime.bigint();
 
   addResponse(calcExecTime(t0, t1));
   incrCacheMisses();
@@ -23,9 +23,9 @@ const getCities = asyncWrapper(async (req: Request, res: Response, next: NextFun
 
 const getCitiesCostly = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
   const queryText = SELECT_CITIES_COSTLY;
-  const t0 = process.hrtime.bigint()
+  const t0 = process.hrtime.bigint();
   const result = await query(queryText);
-  const t1 = process.hrtime.bigint()
+  const t1 = process.hrtime.bigint();
 
   addResponse(calcExecTime(t0, t1));
   incrCacheMisses();

@@ -18,15 +18,12 @@ const getCitiesCostly = asyncWrapper(async (req: Request, res: Response, next: N
   next();
 });
 
-
 router.get('/', getCities, (req: Request, res: Response) => {
   res.json(res.locals.data);
 });
 
-
 router.get('/costly', getCitiesCostly, (req: Request, res: Response) => {
   res.json(res.locals.data);
 });
-
 
 export default router;
