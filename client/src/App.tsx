@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import theme from './theme';
-import Button from '@mui/material/Button';
-import Switch from '@mui/material/Switch';
 import QueryBox from './components/QueryBox';
 import Header from './components/Header';
 import SubmitButton from './components/SubmitButton';
 import Box from '@mui/material/Box';
 import CacheSwitch from './components/CacheSwitch';
-import ResponseTimeChartDummy from './components/ResponseTimeChartDummy';
-import CacheMetricsChartDummy from './components/CacheMetricsChartDummy';
 import QueryResultBox from './components/QueryResultBox';
 import CacheMetricsChart from './components/CacheMetricsChart';
 import ResponseTimeChart from './components/ResponseTimeChart';

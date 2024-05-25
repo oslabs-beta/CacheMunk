@@ -4,18 +4,28 @@ import { compress, uncompress } from 'snappy';
 type EventHandler = (queryKey: string, executionTime: number) => void;
 
 interface Config {
-  redis: Redis,
-  onCacheHit?: EventHandler,
-  onCacheMiss?: EventHandler,
+  redis: Redis;
+  defaultTtl?: number;
+  maxEntrySize?: number;
+  onCacheHit?: EventHandler;
+  onCacheMiss?: EventHandler;
 }
-
+// write cache in the functional style (creator function)
+// instead of class (OOP) syntax for stronger encapsulation
 export const configureCache = (options: Config) => {
-
   const { redis } = options;
 
+  // checks that redis passed in is an instance of Redis
   if (!(redis instanceof Redis)) {
     throw new Error('ioredis client not found');
   }
+
+  // set default ttl to 1 hour (3600 seconds)
+  const defaultTtl = options.defaultTtl && options.defaultTtl > 0 ? options.defaultTtl : 3600;
+
+  // set default maxEntrySize to 5MB (5_000_000 bytes)
+  const maxEntrySize =
+    options.maxEntrySize && options.maxEntrySize > 0 ? options.maxEntrySize : 5_000_000;
 
   const { onCacheHit, onCacheMiss } = options;
 
@@ -29,7 +39,7 @@ export const configureCache = (options: Config) => {
     queryKey: string,
     data: string | Buffer,
     dependencies: string[],
-    ttlInSeconds = 3600, // default to 1 hour in seconds
+    ttlInSeconds = defaultTtl, // default to 1 hour in seconds
   ): Promise<void> {
     // Capture initial timestamp for performance monitoring
     const start = process.hrtime.bigint();
@@ -37,11 +47,16 @@ export const configureCache = (options: Config) => {
     // Convert data to binary Buffer if it is a string
     const binaryData = typeof data === 'string' ? Buffer.from(data) : data;
 
-    // Compress buffer to save bandwidth
+    // check if binary Data exceeds maxEntrySize
+    if (binaryData.length > maxEntrySize) {
+      throw new Error('maxEntrySize exceeded');
+    }
+
+    // Compress buffer to save bandwidth using snappy. To further compress buffer. ex: 10kb ->3 kb
     const compressedData = await compress(binaryData);
-    
+
     if (dependencies.length > 0) {
-      // Create a pipeline
+      // Create a pipeline/transaction (ensure data integrity and consistency. If one fail, all fails)
       const pipeline = redis.multi();
 
       // Store the query result
@@ -66,13 +81,15 @@ export const configureCache = (options: Config) => {
     console.log(`write data to cache in ${calcExecTime(start, end).toFixed(3)}`);
   }
 
-  // Function to retrieve a cached query result 
+  // Function to retrieve a cached query result
   async function get(queryKey: string): Promise<string | null> {
     // Capture initial timestamp for performance monitoring
     const start = process.hrtime.bigint();
 
     // Retrieve the cached query result based on query key
+    const startReq = process.hrtime.bigint();
     const compressedData = await redis.getBuffer(queryKey);
+    const endReq = process.hrtime.bigint();
 
     // Handle cache miss
     if (!compressedData) {
@@ -85,7 +102,9 @@ export const configureCache = (options: Config) => {
     }
 
     // Decompress result
+    const startSnappy = process.hrtime.bigint();
     const binaryData = await uncompress(compressedData);
+    const endSnappy = process.hrtime.bigint();
 
     // Convert result to string
     const data = binaryData.toString();
@@ -94,6 +113,9 @@ export const configureCache = (options: Config) => {
     const end = process.hrtime.bigint();
 
     if (onCacheHit) onCacheHit(queryKey, calcExecTime(start, end));
+    console.log(`response from redis in ${calcExecTime(startReq, endReq).toFixed(3)}`);
+    console.log(`compressed data size ${compressedData.length / 1000} KB`);
+    console.log(`decompression in ${calcExecTime(startSnappy, endSnappy).toFixed(3)}`);
     console.log(`cache hit in ${calcExecTime(start, end).toFixed(3)}`);
     return data;
   }

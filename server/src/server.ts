@@ -25,10 +25,12 @@ app.get('/cache-response-times', (req, res) => {
   res.json(cacheResponseTimes);
 });
 
+// 404 error handler
 app.use('*', (req, res) => {
   res.status(404).json('Page Not Found');
 });
 
+// Global error handler
 app.use(
   (
     err: { log: string; status: number; message: string },
