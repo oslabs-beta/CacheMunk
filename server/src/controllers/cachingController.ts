@@ -18,10 +18,6 @@ export const getData = async (
   if (cachedResult) {
     const t1 = process.hrtime.bigint();
     incrCacheHits(); // incr cache hit counter
-
-    const cacheSize = await cache.getSize()
-    console.log('cache size:', cacheSize);
-
     addResponse(calcExecTime(t0, t1)); // add execution time to array
     return {
       query: queryText,
