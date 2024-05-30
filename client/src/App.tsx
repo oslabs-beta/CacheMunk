@@ -11,6 +11,7 @@ import CacheMetricsChart from './components/CacheMetricsChart';
 import QueryResultBox from './components/QueryResultBox';
 import SummaryGauges from './components/SummaryGauges';
 import CustomSelectQuery from './components/CustomSelectQuery';
+import CustomInsertQuery from './components/CustomInsertQuery';
 
 const App: React.FC = () => {
   const [cacheSwitch, setCacheSwitch] = useState<boolean>(true);
@@ -57,6 +58,7 @@ const App: React.FC = () => {
               <CacheMetricsChart cacheHits={cacheHits} cacheMisses={cacheMisses} />
               <QueryResultBox queryResult={queryResult} />
               <CustomSelectQuery />
+              <CustomInsertQuery />
             </Box>
           } />
           <Route path="/summary" element={<SummaryGauges />} />
