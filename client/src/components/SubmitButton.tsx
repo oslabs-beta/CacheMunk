@@ -32,17 +32,17 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
   onClick,
   disabled = false,
 }) => {
-  const showNotification = () => {
-    if (Notification.permission === 'granted') {
-      new Notification('Button was clicked');
-    } else if (Notification.permission !== 'denied') {
-      Notification.requestPermission().then((permission) => {
-        if (permission === 'granted') {
-          new Notification('Button was clicked');
-        }
-      });
-    }
-  };
+  // const showNotification = () => {
+  //   if (Notification.permission === 'granted') {
+  //     new Notification('Button was clicked');
+  //   } else if (Notification.permission !== 'denied') {
+  //     Notification.requestPermission().then((permission) => {
+  //       if (permission === 'granted') {
+  //         new Notification('Button was clicked');
+  //       }
+  //     });
+  //   }
+  // };
 
   const fetchChartData = async () => {
     try {
@@ -61,7 +61,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
   const handleClick = async () => {
     console.log('Cache Switch:', cacheSwitch);
     console.log('Query Select:', querySelect);
-    showNotification();
+    // showNotification();
 
     let endpoint = ''; // initialize endpoint to empty string
     let method: 'GET' | 'POST' = 'GET'; // default method will be POST
