@@ -2,6 +2,7 @@ import express, { Request, Response, NextFunction } from 'express';
 import dataRouter from './routers/dataRouter.js';
 import { getCacheInfo, getCacheResponseTimes } from './analytics.js';
 import { getCacheSize } from './controllers/cacheSize.js';
+import { deleteCache } from './controllers/deleteCache.js';
 
 const app = express();
 
@@ -26,8 +27,14 @@ app.get('/cache-response-times', (req, res) => {
   res.json(cacheResponseTimes);
 });
 
+// Endpoint to get the size of the redis cache
 app.get('/cacheSize', getCacheSize, (req, res) => {
   res.json(res.locals.cacheSize);
+});
+
+// End point to delete all redis cache
+app.get('/deleteCache', deleteCache, (req, res) => {
+  res.send('cache and response time should both be deleted');
 });
 
 // 404 error handler

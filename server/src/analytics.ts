@@ -1,5 +1,5 @@
 // Array to store response times
-const cacheResponseTimes: number[] = [];
+let cacheResponseTimes: number[] = [];
 
 // Object to store cache hits and cache misses counters
 const cacheInfo = {
@@ -9,6 +9,10 @@ const cacheInfo = {
 
 export const addResponse = (execTime: number): void => {
   cacheResponseTimes.push(execTime);
+};
+
+export const resetResponse = (): void => {
+  cacheResponseTimes = [];
 };
 
 export const incrCacheHits = (): void => {
