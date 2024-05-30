@@ -74,16 +74,27 @@ const NewEntryForm = () => {
     flag: true,
   });
 
+  const [showData, setShowData] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
   const handleChange = (event) => {
     const { name, value } = event.target;
-    setFormData({
+    const newFormData = {
       ...formData,
       [name]: value,
       state_id: name === 'state_code' ? stateCodes[value] : formData.state_id,
-    });
+    };
+    if (name === 'state_code') {
+      const { latitude, longitude } = getRandomCoordinates();
+      newFormData.latitude = latitude;
+      newFormData.longitude = longitude;
+    }
+    setFormData(newFormData);
+  };
+
+  const handleShowData = () => {
+    setShowData((prevShowData) => !prevShowData);
   };
 
   const handleSubmit = async (event) => {
@@ -91,12 +102,7 @@ const NewEntryForm = () => {
     setError('');
     setSuccess(false);
 
-    const { latitude, longitude } = getRandomCoordinates();
-    const submissionData = {
-      ...formData,
-      latitude,
-      longitude,
-    };
+    const submissionData = { ...formData };
 
     try {
       const response = await fetch('https://4920a04e-c579-4e3e-8106-1c179e75ac0e.mock.pstmn.io/api/query', {
@@ -133,7 +139,6 @@ const NewEntryForm = () => {
           onChange={handleChange}
           margin="normal"
           helperText="Choose an integer greater than 153725"
-          defaultValue={153725}
         />
         <TextField
           label="Name"
@@ -161,10 +166,43 @@ const NewEntryForm = () => {
             ))}
           </Select>
         </FormControl>
-        <Button type="submit" variant="contained" color="primary">
-          Submit
-        </Button>
+        <Box display="flex" justifyContent="space-between" mt={2}>
+          <Button variant="contained" color="secondary" onClick={handleShowData}>
+            Show Data
+          </Button>
+          <Button type="submit" variant="contained" color="primary">
+            Submit
+          </Button>
+        </Box>
       </Box>
+      {showData && (
+        <Box mt={2} width="100%" maxWidth="600px">
+          <Typography variant="body1" component="pre">
+            {`INSERT INTO public.cities (
+  country_code,
+  country_id,
+  flag,
+  id,
+  latitude,
+  longitude,
+  name,
+  state_code,
+  state_id
+)
+VALUES (
+  '${formData.country_code}',
+  ${formData.country_id},
+  ${formData.flag},
+  '${formData.id}',
+  '${formData.latitude}',
+  '${formData.longitude}',
+  '${formData.name}',
+  '${formData.state_code}',
+  ${formData.state_id}
+);`}
+          </Typography>
+        </Box>
+      )}
       {error && <Typography color="error">{error}</Typography>}
       {success && <Typography color="primary">Form submitted successfully!</Typography>}
     </Box>
