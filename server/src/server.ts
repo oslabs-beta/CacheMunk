@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dataRouter from './routers/dataRouter.js';
 import { getCacheInfo, getCacheResponseTimes } from './analytics.js';
+import { getCacheSize } from './controllers/cacheSize.js';
 
 const app = express();
 
@@ -23,6 +24,10 @@ app.get('/cache-analytics', (req, res) => {
 app.get('/cache-response-times', (req, res) => {
   const cacheResponseTimes = getCacheResponseTimes();
   res.json(cacheResponseTimes);
+});
+
+app.get('/cacheSize', getCacheSize, (req, res) => {
+  res.json(res.locals.cacheSize);
 });
 
 // 404 error handler

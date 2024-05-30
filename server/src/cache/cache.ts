@@ -1,3 +1,4 @@
+import { OnlinePredictionSharp } from '@mui/icons-material';
 import { Redis } from 'ioredis';
 import { compress, uncompress } from 'snappy';
 
@@ -146,7 +147,27 @@ export const configureCache = (options: Config) => {
     console.log(`cache invalidate in ${calcExecTime(start, end).toFixed(3)}`);
   }
 
-  return { set, get, invalidate };
+  // Function to clear the cache
+  async function clear(): Promise<void> {
+    try {
+      const result = await redis.flushall();
+      console.log('Cache for the current database cleared', result);
+    } catch (err) {
+      console.error('Error clearing cache:', err)
+    }
+  }
+
+  async function getSize(): Promise<number> {
+    try{
+      const size = await redis.dbsize();
+      return size;
+    }catch (err){
+      console.error('Error getting cache size', err);
+      return 0;
+    }
+  }
+
+  return { set, get, invalidate, clear, getSize };
 };
 
 export default configureCache;
