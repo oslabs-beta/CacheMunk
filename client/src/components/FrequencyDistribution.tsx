@@ -20,7 +20,7 @@ const FrequencyDistribution = () => {
 
   const fetchData = async () => {
     try {
-      const response = await fetch('ttps://4920a04e-c579-4e3e-8106-1c179e75ac0e.mock.pstmn.io/distribution');
+      const response = await fetch('https://4920a04e-c579-4e3e-8106-1c179e75ac0e.mock.pstmn.io/distribution');
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }

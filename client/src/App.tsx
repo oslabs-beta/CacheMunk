@@ -13,6 +13,7 @@ import SummaryGauges from './components/SummaryGauges';
 import CustomSelectQuery from './components/CustomSelectQuery';
 import CustomInsertQuery from './components/CustomInsertQuery';
 import FrequencyDistribution from './components/FrequencyDistribution';
+import ClearCacheButton from './components/ClearCacheButton';
 
 const App: React.FC = () => {
   const [cacheSwitch, setCacheSwitch] = useState<boolean>(true);
@@ -40,22 +41,32 @@ const App: React.FC = () => {
         <Routes>
           <Route path="/" element={
             <Box display='flex' flexDirection='column' alignItems='center' padding={3} minHeight='30vh'>
-              <CacheSwitch cacheSwitch={cacheSwitch} setCacheSwitch={setCacheSwitch} />
+              <Box display='flex' alignItems='center'>
+                <CacheSwitch cacheSwitch={cacheSwitch} setCacheSwitch={setCacheSwitch} />
+                <ClearCacheButton
+                  setCacheHits={setCacheHits}
+                  setCacheMisses={setCacheMisses}
+                  setResponseTimes={setResponseTimes}
+                  setQueryResult={setQueryResult}
+                />
+              </Box>
               <Box padding={2} width='50%'>
                 <QueryBox querySelect={querySelect} setQuerySelect={setQuerySelect} />
               </Box>
-              <SubmitButton
-                cacheSwitch={cacheSwitch}
-                querySelect={querySelect}
-                cacheHits={cacheHits}
-                setCacheHits={setCacheHits}
-                cacheMisses={cacheMisses}
-                setCacheMisses={setCacheMisses}
-                responseTimes={responseTimes}
-                setResponseTimes={setResponseTimes}
-                queryResult={queryResult}
-                setQueryResult={setQueryResult}
-              />
+              <Box padding={2} width='50%' display='flex' justifyContent='center'>
+                <SubmitButton
+                  cacheSwitch={cacheSwitch}
+                  querySelect={querySelect}
+                  cacheHits={cacheHits}
+                  setCacheHits={setCacheHits}
+                  cacheMisses={cacheMisses}
+                  setCacheMisses={setCacheMisses}
+                  responseTimes={responseTimes}
+                  setResponseTimes={setResponseTimes}
+                  queryResult={queryResult}
+                  setQueryResult={setQueryResult}
+                />
+              </Box>
               <ResponseTimeChart responseTimes={responseTimes} />
               <CacheMetricsChart cacheHits={cacheHits} cacheMisses={cacheMisses} />
               <QueryResultBox queryResult={queryResult} />
@@ -72,3 +83,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+
