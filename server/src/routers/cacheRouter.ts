@@ -18,11 +18,27 @@ const getCitiesCostly = asyncWrapper(async (req: Request, res: Response, next: N
   next();
 });
 
+//logic still needed for cached dynamic select
+const getDynamicSelect = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
+  const queryKey = req.body.query;
+  const result = await getData(queryKey);
+  console.log('result:', result);
+  res.locals.data = result;
+  next();
+});
+
 router.get('/', getCities, (req: Request, res: Response) => {
   res.json(res.locals.data);
 });
 
 router.get('/costly', getCitiesCostly, (req: Request, res: Response) => {
+  res.json(res.locals.data);
+});
+
+//dynamic select query router
+//logic still needed for cached dynamic select
+router.post('/dynamic-select', getDynamicSelect, (req: Request, res: Response) => {
+  console.log('res.locals.data:', res.locals.data);
   res.json(res.locals.data);
 });
 
