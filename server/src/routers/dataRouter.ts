@@ -16,7 +16,7 @@ router.post('/cities', insertCity, (req: Request, res: Response) => {
   res.status(201).json({ message: 'city inserted in db' });
 });
 
-router.post('/dynamic', dynamicQuery, (req: Request, res: Response) => {
+router.post('/dynamic-insert', dynamicQuery, (req: Request, res: Response) => {
   // invalidate the cache
   // make insert query ot the SQL database
   res.status(201).json({ message: 'db insertion complete' });
