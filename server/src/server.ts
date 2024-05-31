@@ -1,6 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
 import dataRouter from './routers/dataRouter.js';
 import { getCacheInfo, getCacheResponseTimes } from './analytics.js';
+import { getCacheSize } from './controllers/cacheSize.js';
+import { deleteCache } from './controllers/deleteCache.js';
 import { exec } from 'child_process';
 import fs from 'fs';
 import client from 'prom-client';
@@ -57,14 +59,24 @@ app.use('/data', dataRouter);
 // Endpoint to get cache-analytics
 app.get('/cache-analytics', (req, res) => {
   const cacheInfo = getCacheInfo();
-  res.json(cacheInfo);
+  res.status(200).json(cacheInfo);
 });
 
 // Endpoint to get response times for /cache (number[])
 app.get('/cache-response-times', (req, res) => {
   console.log('Received request to /cache-response-times');
   const cacheResponseTimes = getCacheResponseTimes();
-  res.json(cacheResponseTimes);
+  res.status(200).json(cacheResponseTimes);
+});
+
+// Endpoint to get the size of the redis cache
+app.get('/cacheSize', getCacheSize, (req, res) => {
+  res.status(200).json(res.locals.cacheSize);
+});
+
+// End point to delete all redis cache
+app.get('/deleteCache', deleteCache, (req, res) => {
+  res.status(200).send('cache, cachehit, cachemiss, and response time should all be deleted');
 });
 
 app.get('/run-artillery-test', (req, res) => {
