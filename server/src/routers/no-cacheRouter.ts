@@ -34,11 +34,30 @@ const getCitiesCostly = asyncWrapper(async (req: Request, res: Response, next: N
   next();
 });
 
+const getDynamicSelect = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
+  const queryText = req.body.query;
+  const t0 = process.hrtime.bigint();
+  const result = await query(queryText);
+  const t1 = process.hrtime.bigint();
+
+  addResponse(calcExecTime(t0, t1));
+  incrCacheMisses();
+
+  res.locals.data = { query: queryText, rows: result.rows };
+  next();
+});
+
 router.get('/', getCities, (req: Request, res: Response) => {
   res.json(res.locals.data);
 });
 
 router.get('/costly', getCitiesCostly, (req: Request, res: Response) => {
+  res.json(res.locals.data);
+});
+
+//dynamic select query router
+router.post('/dynamic-select', getDynamicSelect, (req: Request, res: Response) => {
+  console.log('dynamic router');
   res.json(res.locals.data);
 });
 
