@@ -17,7 +17,7 @@ const CustomSelectQuery = () => {
     event.preventDefault(); // Prevent the default form submission
     setError(''); // Clear any previous errors
     try {
-      const response = await fetch('https://4920a04e-c579-4e3e-8106-1c179e75ac0e.mock.pstmn.io/api/query', { // Fetch the query from the backend
+      const response = await fetch('/data/no-cache/dynamic-select', { // Fetch the query from the backend
         method: 'POST', // Use POST method
         headers: {
           'Content-Type': 'application/json', // Set the content type to JSON

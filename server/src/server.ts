@@ -23,6 +23,7 @@ app.get('/cache-analytics', (req, res) => {
 
 // Endpoint to get response times for /cache (number[])
 app.get('/cache-response-times', (req, res) => {
+  console.log('Received request to /cache-response-times');
   const cacheResponseTimes = getCacheResponseTimes();
   res.status(200).json(cacheResponseTimes);
 });
@@ -61,6 +62,5 @@ app.use(
 );
 
 app.listen(PORT, () => {
-  // eslint-disable-next-line no-console
   console.log(`Listening on port ${PORT.toString()}`);
 });
