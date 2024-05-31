@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server/dist/server.js",
-    "server": "nodemon --config nodemon.json server/dist/server.js",
+    "server": "nodemon server/dist/server.js",
     "client": "NODE_ENV=development webpack serve --config client/webpack.config.js --open",
     "build:client": "NODE_ENV=production webpack --config client/webpack.config.js",
     "build:server": "tsc -p server/tsconfig.json",
@@ -22,7 +22,6 @@
     "@mui/icons-material": "^5.15.18",
     "@mui/material": "^5.15.19",
     "@mui/x-charts": "^7.6.0",
-    "artillery": "^2.0.14",
     "chart.js": "^4.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
@@ -31,12 +30,12 @@
     "nodemon": "^3.1.0",
     "pg": "^8.11.5",
     "plotly.js": "^2.33.0",
-    "prom-client": "^15.1.2",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
     "react-plotly.js": "^2.6.0",
     "react-router-dom": "^6.23.1",
+    "recharts": "^2.12.7",
     "snappy": "^7.2.2"
   },
   "devDependencies": {
@@ -66,8 +65,5 @@
     "webpack": "^5.91.0",
     "webpack-cli": "^5.1.4",
     "webpack-dev-server": "^5.0.4"
-  },
-  "nodemonConfig": {
-    "ignore": ["results.json"]
   }
 }

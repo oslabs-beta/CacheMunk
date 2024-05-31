@@ -64,7 +64,6 @@ const getRandomCoordinates = () => {
 
 const NewEntryForm = () => {
   const [formData, setFormData] = useState({
-    id: '153725',
     name: '',
     state_code: '',
     country_id: 233,
@@ -130,17 +129,6 @@ const NewEntryForm = () => {
       </Typography>
       <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column" width="100%" maxWidth="600px">
         <TextField
-          label="ID"
-          name="id"
-          type="number"
-          variant="outlined"
-          fullWidth
-          value={formData.id}
-          onChange={handleChange}
-          margin="normal"
-          helperText="Choose an integer greater than 153725"
-        />
-        <TextField
           label="Name"
           name="name"
           type="text"
@@ -182,7 +170,6 @@ const NewEntryForm = () => {
   country_code,
   country_id,
   flag,
-  id,
   latitude,
   longitude,
   name,
@@ -193,7 +180,6 @@ VALUES (
   '${formData.country_code}',
   ${formData.country_id},
   ${formData.flag},
-  '${formData.id}',
   '${formData.latitude}',
   '${formData.longitude}',
   '${formData.name}',
