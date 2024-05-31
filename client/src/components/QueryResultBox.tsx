@@ -2,10 +2,14 @@ import React from 'react';
 import { Box, Typography } from '@mui/material';
 
 interface QueryResultProps {
-  queryresult: Record<string, any> | null; // Specify a more concrete type
+  queryResult: Record<string, any> | null; // Specify a more concrete type
 }
 
-const QueryResultBox: React.FC<QueryResultProps> = ({ queryresult }) => (
+const QueryResultBox: React.FC<QueryResultProps> = ({ queryResult }) => {
+  // Debugging: Log the queryresult to see what it contains at runtime
+  console.log('Query Result:', queryResult);
+
+  return (
     <Box
       display="flex"
       flexDirection="column"
@@ -16,10 +20,6 @@ const QueryResultBox: React.FC<QueryResultProps> = ({ queryresult }) => (
       padding={2}
       width="100%"
       height="350px"
-      // sx={{
-      //   backgroundColor: 'white',
-      //   overflow: 'auto',
-      // }}
     >
       <Typography variant="h6" gutterBottom>
         Query Result
@@ -48,12 +48,13 @@ const QueryResultBox: React.FC<QueryResultProps> = ({ queryresult }) => (
           }}
         >
           <Typography variant="body1" color="black" component="span">
-            {queryresult ? JSON.stringify(queryresult, null, 2) : 'No data available'}
+            {queryResult ? JSON.stringify(queryResult, null, 2) : 'No data available'}
           </Typography>
         </pre>
       </Box>
     </Box>
   );
+};
 
 export default QueryResultBox;
 
