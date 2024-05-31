@@ -23,6 +23,11 @@ export const incrCacheMisses = (): void => {
   cacheInfo.cacheMisses++;
 };
 
+export const resetCache = (): void => {
+  cacheInfo.cacheHits = 0;
+  cacheInfo.cacheMisses = 0;
+};
+
 export const getCacheInfo = () => cacheInfo;
 
 export const getCacheResponseTimes = (): number[] => cacheResponseTimes;

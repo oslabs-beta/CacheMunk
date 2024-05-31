@@ -18,23 +18,23 @@ app.use('/data', dataRouter);
 // Endpoint to get cache-analytics
 app.get('/cache-analytics', (req, res) => {
   const cacheInfo = getCacheInfo();
-  res.json(cacheInfo);
+  res.status(200).json(cacheInfo);
 });
 
 // Endpoint to get response times for /cache (number[])
 app.get('/cache-response-times', (req, res) => {
   const cacheResponseTimes = getCacheResponseTimes();
-  res.json(cacheResponseTimes);
+  res.status(200).json(cacheResponseTimes);
 });
 
 // Endpoint to get the size of the redis cache
 app.get('/cacheSize', getCacheSize, (req, res) => {
-  res.json(res.locals.cacheSize);
+  res.status(200).json(res.locals.cacheSize);
 });
 
 // End point to delete all redis cache
 app.get('/deleteCache', deleteCache, (req, res) => {
-  res.send('cache and response time should both be deleted');
+  res.status(200).send('cache, cachehit, cachemiss, and response time should all be deleted');
 });
 
 // 404 error handler
