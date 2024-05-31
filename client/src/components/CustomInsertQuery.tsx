@@ -104,7 +104,7 @@ const NewEntryForm = () => {
     const submissionData = { ...formData };
 
     try {
-      const response = await fetch('https://4920a04e-c579-4e3e-8106-1c179e75ac0e.mock.pstmn.io/api/query', {
+      const response = await fetch('/data/dynamic-insert', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -129,7 +129,7 @@ const NewEntryForm = () => {
       </Typography>
       <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column" width="100%" maxWidth="600px">
         <TextField
-          label="Name"
+          label="New City Name"
           name="name"
           type="text"
           variant="outlined"
