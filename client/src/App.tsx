@@ -14,6 +14,7 @@ import CustomSelectQuery from './components/CustomSelectQuery';
 import CustomInsertQuery from './components/CustomInsertQuery';
 import FrequencyDistribution from './components/FrequencyDistribution';
 import ClearCacheButton from './components/ClearCacheButton';
+import SummaryContainer from './components/SummaryContainer';
 
 const App: React.FC = () => {
   const [cacheSwitch, setCacheSwitch] = useState<boolean>(true);
@@ -36,7 +37,6 @@ const App: React.FC = () => {
         <Tabs value={tabValue} onChange={handleTabChange} aria-label="navigation tabs">
           <Tab label="Home" component={Link} to="/" />
           <Tab label="Summary" component={Link} to="/summary" />
-          <Tab label="Frequency" component={Link} to="/frequency" />
         </Tabs>
         <Routes>
           <Route path="/" element={
@@ -89,8 +89,7 @@ const App: React.FC = () => {
               />
             </Box>
           } />
-          <Route path="/summary" element={<SummaryGauges />} />
-          <Route path="/frequency" element={<FrequencyDistribution />} />
+          <Route path="/summary" element={<SummaryContainer />} />
         </Routes>
       </ThemeProvider>
     </BrowserRouter>
