@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography, MenuItem, Select, FormControl, InputLabel } from '@mui/material';
 
+interface NewEntryFromProps {
+  cacheHits: number;
+  setCacheHits: React.Dispatch<React.SetStateAction<number>>;
+  cacheMisses: number;
+  setCacheMisses: React.Dispatch<React.SetStateAction<number>>;
+  responseTimes: number[];
+  setResponseTimes: React.Dispatch<React.SetStateAction<number[]>>;
+}
+
 const stateCodes = {
   "AK": 1400,
   "AL": 1456,
@@ -62,7 +71,14 @@ const getRandomCoordinates = () => {
   return { latitude, longitude };
 };
 
-const NewEntryForm = () => {
+const NewEntryForm: React.FC<NewEntryFromProps> = ({
+  cacheHits,
+  setCacheHits,
+  cacheMisses,
+  setCacheMisses,
+  responseTimes,
+  setResponseTimes
+}) => {
   const [formData, setFormData] = useState({
     name: '',
     state_code: '',
