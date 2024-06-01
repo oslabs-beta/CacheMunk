@@ -1,11 +1,43 @@
 import React, { useState } from 'react';
 import { Box, Button, TextField, Typography } from '@mui/material';
 
+//write interface for CustomSelectQueryProps
+interface CustomSelectQueryProps {
+  cacheSwitch: boolean;
+  setCacheHits: React.Dispatch<React.SetStateAction<number>>;
+  cacheMisses: number;
+  setCacheMisses: React.Dispatch<React.SetStateAction<number>>;
+  responseTimes: number[];
+  setResponseTimes: React.Dispatch<React.SetStateAction<number[]>>;
+}
+
 // CustomSelectQuery component
-const CustomSelectQuery = () => {
+const CustomSelectQuery: React.FC<CustomSelectQueryProps> = ({
+  cacheSwitch,
+  setCacheHits,
+  cacheMisses,
+  setCacheMisses,
+  responseTimes,
+  setResponseTimes,
+}) => {
   const [query, setQuery] = useState('');
   const [result, setResult] = useState(null);
   const [error, setError] = useState('');
+
+  // fetchChartData function
+  const fetchChartData = async () => {
+    try {
+      const cacheHitMissReponse = await fetch('/cache-analytics'); // fetches from endpoint
+      const cacheHitMissData = await cacheHitMissReponse.json(); // converts to Javascript object
+      setCacheHits(cacheHitMissData.cacheHits); // uses key to retrieve value and set state
+      setCacheMisses(cacheHitMissData.cacheMisses);
+      const responseTimesResponse = await fetch('/cache-response-times');
+      const responseTimesData = await responseTimesResponse.json();
+      setResponseTimes(responseTimesData);
+    } catch (error) {
+      console.error('Error fetching Chart Data:', error);
+    }
+  };
 
   // handleInputChange function
   const handleInputChange = (event) => {
@@ -16,24 +48,30 @@ const CustomSelectQuery = () => {
   const handleSubmit = async (event) => {
     event.preventDefault(); // Prevent the default form submission
     setError(''); // Clear any previous errors
+
+    const endpoint = cacheSwitch ? '/data/cache/dynamic-select' : '/data/no-cache/dynamic-select';
+
     try {
-      const response = await fetch('https://4920a04e-c579-4e3e-8106-1c179e75ac0e.mock.pstmn.io/api/query', { // Fetch the query from the backend
-        method: 'POST', // Use POST method
+      const response = await fetch(endpoint, { // Fetch the data from the endpoint
+        method: 'POST',
         headers: {
-          'Content-Type': 'application/json', // Set the content type to JSON
+          'Content-Type': 'application/json', // Specify the content type
         },
         body: JSON.stringify({ query }), // Send the query as JSON
       });
 
-      if (!response.ok) { // Check if the response is not ok
-        throw new Error('Network response was not ok'); // Throw an error
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
 
       const data = await response.json(); // Parse the response as JSON
-      setResult(data); // Set the result state to the data
+      setResult(data); // Set the result state
     } catch (err) {
-      setError('Error executing query'); // Set the error state
+      setError('Error executing query');
     }
+
+    // Fetch Chart Data after executing the query
+    fetchChartData();
   };
 
   return (

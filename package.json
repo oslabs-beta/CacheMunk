@@ -20,7 +20,7 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@mui/icons-material": "^5.15.18",
-    "@mui/material": "^5.15.18",
+    "@mui/material": "^5.15.19",
     "@mui/x-charts": "^7.6.0",
     "chart.js": "^4.4.3",
     "cors": "^2.8.5",
@@ -29,11 +29,13 @@
     "ioredis": "^5.4.1",
     "nodemon": "^3.1.0",
     "pg": "^8.11.5",
-    "prom-client": "^15.1.2",
+    "plotly.js": "^2.33.0",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
+    "react-plotly.js": "^2.6.0",
     "react-router-dom": "^6.23.1",
+    "recharts": "^2.12.7",
     "snappy": "^7.2.2"
   },
   "devDependencies": {
