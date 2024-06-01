@@ -17,7 +17,7 @@ const CustomSelectQuery = () => {
     event.preventDefault(); // Prevent the default form submission
     setError(''); // Clear any previous errors
     try {
-      const response = await fetch('/data/no-cache/dynamic-select', { // Fetch the query from the backend
+      const response = await fetch('/data/cache/dynamic-select', { // Fetch the query from the backend
         method: 'POST', // Use POST method
         headers: {
           'Content-Type': 'application/json', // Set the content type to JSON
