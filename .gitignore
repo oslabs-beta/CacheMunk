@@ -27,6 +27,7 @@ pids
 /out
 /server/dist
 /client/dist
+/test/dist
 
 # TypeScript compiled files
 *.tsbuildinfo

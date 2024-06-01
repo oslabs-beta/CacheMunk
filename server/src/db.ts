@@ -45,7 +45,7 @@ export const query = async (
   try {
     const result = await pool.query(text, params);
     // eslint-disable-next-line no-console
-    console.log(`query ${text} executed`);
+    // console.log(`query ${text} executed`);
     return result;
   } catch (err) {
     // eslint-disable-next-line no-console
