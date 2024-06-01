@@ -1,4 +1,3 @@
-import { OnlinePredictionSharp } from '@mui/icons-material';
 import { Redis } from 'ioredis';
 import { compress, uncompress } from 'snappy';
 
@@ -43,7 +42,7 @@ export const configureCache = (options: Config) => {
     ttlInSeconds = defaultTtl, // default to 1 hour in seconds
   ): Promise<void> {
     // Capture initial timestamp for performance monitoring
-    const start = process.hrtime.bigint();
+    // const start = process.hrtime.bigint();
 
     // Convert data to binary Buffer if it is a string
     const binaryData = typeof data === 'string' ? Buffer.from(data) : data;
@@ -77,9 +76,9 @@ export const configureCache = (options: Config) => {
     }
 
     // Capture final timestamp
-    const end = process.hrtime.bigint();
+    // const end = process.hrtime.bigint();
 
-    console.log(`write data to cache in ${calcExecTime(start, end).toFixed(3)}`);
+    // console.log(`write data to cache in ${calcExecTime(start, end).toFixed(3)}`);
   }
 
   // Function to retrieve a cached query result
@@ -88,9 +87,9 @@ export const configureCache = (options: Config) => {
     const start = process.hrtime.bigint();
 
     // Retrieve the cached query result based on query key
-    const startReq = process.hrtime.bigint();
+    // const startReq = process.hrtime.bigint();
     const compressedData = await redis.getBuffer(queryKey);
-    const endReq = process.hrtime.bigint();
+    // const endReq = process.hrtime.bigint();
 
     // Handle cache miss
     if (!compressedData) {
@@ -98,14 +97,14 @@ export const configureCache = (options: Config) => {
       // to do: log cache miss
       const end = process.hrtime.bigint();
       if (onCacheMiss) onCacheMiss(queryKey, calcExecTime(start, end));
-      console.log(`cache miss in ${calcExecTime(start, end).toFixed(3)}`);
+      // console.log(`cache miss in ${calcExecTime(start, end).toFixed(3)}`);
       return null;
     }
 
     // Decompress result
-    const startSnappy = process.hrtime.bigint();
+    // const startSnappy = process.hrtime.bigint();
     const binaryData = await uncompress(compressedData);
-    const endSnappy = process.hrtime.bigint();
+    // const endSnappy = process.hrtime.bigint();
 
     // Convert result to string
     const data = binaryData.toString();
@@ -114,16 +113,16 @@ export const configureCache = (options: Config) => {
     const end = process.hrtime.bigint();
 
     if (onCacheHit) onCacheHit(queryKey, calcExecTime(start, end));
-    console.log(`response from redis in ${calcExecTime(startReq, endReq).toFixed(3)}`);
-    console.log(`compressed data size ${compressedData.length / 1000} KB`);
-    console.log(`decompression in ${calcExecTime(startSnappy, endSnappy).toFixed(3)}`);
-    console.log(`cache hit in ${calcExecTime(start, end).toFixed(3)}`);
+    // console.log(`response from redis in ${calcExecTime(startReq, endReq).toFixed(3)}`);
+    // console.log(`compressed data size ${compressedData.length / 1000} KB`);
+    // console.log(`decompression in ${calcExecTime(startSnappy, endSnappy).toFixed(3)}`);
+    // console.log(`cache hit in ${calcExecTime(start, end).toFixed(3)}`);
     return data;
   }
 
   // Function to invalidate cache based on table updates
   async function invalidate(dependency: string) {
-    const start = process.hrtime.bigint();
+    // const start = process.hrtime.bigint();
 
     const dependencyKey = `dependency:${dependency}`;
 
@@ -142,9 +141,9 @@ export const configureCache = (options: Config) => {
       await redis.del(dependencyKey);
     }
 
-    const end = process.hrtime.bigint();
+    // const end = process.hrtime.bigint();
 
-    console.log(`cache invalidate in ${calcExecTime(start, end).toFixed(3)}`);
+    // console.log(`cache invalidate in ${calcExecTime(start, end).toFixed(3)}`);
   }
 
   // Function to clear the cache
@@ -153,15 +152,15 @@ export const configureCache = (options: Config) => {
       const result = await redis.flushall();
       console.log('Cache for the current database cleared', result);
     } catch (err) {
-      console.error('Error clearing cache:', err)
+      console.error('Error clearing cache:', err);
     }
   }
 
   async function getSize(): Promise<number> {
-    try{
+    try {
       const size = await redis.dbsize();
       return size;
-    }catch (err){
+    } catch (err) {
       console.error('Error getting cache size', err);
       return 0;
     }

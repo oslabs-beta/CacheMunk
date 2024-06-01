@@ -12,7 +12,7 @@
     "build:server": "tsc -p server/tsconfig.json",
     "build:server:watch": "tsc -p server/tsconfig.json --watch",
     "lint": "eslint .",
-    "test:server": "mocha './server/__tests__/**/*'"
+    "test": "tsc -p test/tsconfig.json && mocha --recursive"
   },
   "author": "",
   "license": "MIT",
@@ -44,8 +44,10 @@
     "@babel/preset-react": "^7.24.1",
     "@babel/preset-typescript": "^7.24.1",
     "@eslint/js": "^9.2.0",
+    "@types/chai": "^4.3.16",
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/mocha": "^10.0.6",
     "@types/node": "^20.12.12",
     "@types/pg": "^8.11.6",
     "@types/react": "^18.3.2",

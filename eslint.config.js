@@ -42,7 +42,7 @@ export default [
     },
   },
   {
-    files: ['server/__tests__/**/*.{js,ts}'],
+    files: ['test/**/*.{js,ts}'],
     languageOptions: {
       globals: {
         ...node,
@@ -86,6 +86,6 @@ export default [
     },
   },
   {
-    ignores: ['client/dist', 'server/dist/'],
+    ignores: ['client/dist', 'server/dist/', 'test/dist'],
   },
 ];
