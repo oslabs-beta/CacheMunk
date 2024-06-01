@@ -70,8 +70,23 @@ const App: React.FC = () => {
               <ResponseTimeChart responseTimes={responseTimes} />
               <CacheMetricsChart cacheHits={cacheHits} cacheMisses={cacheMisses} />
               <QueryResultBox queryResult={queryResult} />
-              <CustomSelectQuery />
-              <CustomInsertQuery />
+              <CustomSelectQuery
+                cacheSwitch={cacheSwitch}
+                cacheHits={cacheHits}
+                setCacheHits={setCacheHits}
+                cacheMisses={cacheMisses}
+                setCacheMisses={setCacheMisses}
+                responseTimes={responseTimes}
+                setResponseTimes={setResponseTimes}
+              />
+              <CustomInsertQuery
+                cacheHits={cacheHits}
+                setCacheHits={setCacheHits}
+                cacheMisses={cacheMisses}
+                setCacheMisses={setCacheMisses}
+                responseTimes={responseTimes}
+                setResponseTimes={setResponseTimes}
+              />
             </Box>
           } />
           <Route path="/summary" element={<SummaryGauges />} />
