@@ -1,6 +1,7 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { asyncWrapper } from '../controllers/errorHandling.js';
 import { getData } from '../controllers/cachingController.js';
+import { queriesMap, dependenciesMap } from '../queries/queriesMap.js';
 
 const router = Router();
 
@@ -20,8 +21,10 @@ const getCitiesCostly = asyncWrapper(async (req: Request, res: Response, next: N
 
 //logic still needed for cached dynamic select
 const getDynamicSelect = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
-  const queryKey = req.body.query;
-  const result = await getData(queryKey);
+  const customQuery: string = (req.body as { query: string }).query;  
+  queriesMap[customQuery] = customQuery;
+  dependenciesMap[customQuery] = [];
+  const result = await getData(customQuery);
   console.log('result:', result);
   res.locals.data = result;
   next();
