@@ -8,7 +8,7 @@ const clients = 10; // number of simultaneous clients
 const requests = 500; // requests per client
 
 // Function to perform the benchmarking
-const runBenchmark = async (testFunc: () => Promise<void>, fileName: string) => {
+const runBenchmark = async (testFunc: () => Promise<any>, fileName: string) => {
   const sendRequest = async () => timingFunc(testFunc);
 
   // function to run a client
