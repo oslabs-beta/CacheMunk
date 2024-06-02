@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import SummaryBarChart from './SummaryBarChart';
 import FrequencyDistribution from './FrequencyDistribution';
+import cacheDataJson from '../data/responseTimes-cache.json';
+import noCacheDataJson from '../data/responseTimes-no-cache.json';
 
 const fallbackDataCache = {
   totalExecTime: 411.261916,
@@ -97,6 +99,9 @@ const fallbackDataNoCache = {
     1, 0, 1, 0, 2, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0
   ]
 };
+
+const fullBenchmarkDataCache: object = cacheDataJson;
+const fullBenchmarkDataNoCache: object = noCacheDataJson;
 
 const SummaryContainer: React.FC = () => {
   const [cacheData, setCacheData] = useState(null);
