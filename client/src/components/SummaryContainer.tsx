@@ -106,13 +106,27 @@ const fullBenchmarkDataNoCache: object = noCacheDataJson;
 const SummaryContainer: React.FC = () => {
   const [cacheData, setCacheData] = useState(null);
   const [noCacheData, setNoCacheData] = useState(null);
-
   const fetchCacheData = async () => {
+    const requestBody = {
+      clients: 5, // clients running in parallel
+      requests: 1000, // requests per client
+      queryKey: 'SELECT_CITIES_COSTLY',
+      'Cache-Control': null
+    };
+  
     try {
-      const response = await fetch('/api/CacheData');
+      const response = await fetch('/benchmark', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      });
+  
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
+  
       const result = await response.json();
       setCacheData(result);
     } catch (error) {
@@ -120,13 +134,29 @@ const SummaryContainer: React.FC = () => {
       setCacheData(fullBenchmarkDataCache);
     }
   };
+  
 
   const fetchNoCacheData = async () => {
+    const requestBody = {
+      clients: 5, // clients running in parallel
+      requests: 1000, // requests per client
+      queryKey: 'SELECT_CITIES_COSTLY',
+      'Cache-Control': 'no-cache' 
+    };
+  
     try {
-      const response = await fetch('/api/noCacheData');
+      const response = await fetch('/benchmark', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestBody)
+      });
+  
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
+  
       const result = await response.json();
       setNoCacheData(result);
     } catch (error) {
@@ -135,6 +165,7 @@ const SummaryContainer: React.FC = () => {
       console.log('noCacheData', noCacheData);
     }
   };
+  
 
   const fetchData = async () => {
     await Promise.all([fetchCacheData(), fetchNoCacheData()]);

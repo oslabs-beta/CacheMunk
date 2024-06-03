@@ -9,6 +9,7 @@ interface CacheMetricsChartProps {
   cacheHits: number;
   cacheMisses: number;
   cacheSize: number; // Add cacheSize to props
+  cacheStatus: string; // Add cacheStatus to props
 }
 
 const MetricCard: React.FC<{ title: string; value: number }> = ({ title, value }) => {

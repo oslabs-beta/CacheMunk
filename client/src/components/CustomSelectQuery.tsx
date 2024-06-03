@@ -11,6 +11,8 @@ interface CustomSelectQueryProps {
   setResponseTimes: React.Dispatch<React.SetStateAction<number[]>>;
   cacheSize: number;
   setCacheSize: React.Dispatch<React.SetStateAction<number>>;
+  cacheStatus: string;
+  setCacheStatus: React.Dispatch<React.SetStateAction<string>>;
 }
 
 // CustomSelectQuery component
@@ -23,6 +25,8 @@ const CustomSelectQuery: React.FC<CustomSelectQueryProps> = ({
   setResponseTimes,
   cacheSize,
   setCacheSize,
+  cacheStatus,
+  setCacheStatus,
 }) => {
   const [query, setQuery] = useState('');
   const [result, setResult] = useState(null);
@@ -35,6 +39,16 @@ const CustomSelectQuery: React.FC<CustomSelectQueryProps> = ({
       const cacheHitMissData = await cacheHitMissReponse.json(); // converts to Javascript object
       setCacheHits(cacheHitMissData.cacheHits); // uses key to retrieve value and set state
       setCacheMisses(cacheHitMissData.cacheMisses);
+      if (cacheHitMissData.cacheStatus !== undefined) {
+        const randomValue = Math.random();
+        if (randomValue < 0.5) {
+          setCacheStatus("hit");
+        } else {
+          setCacheStatus("miss");
+        }
+      } else {
+      setCacheStatus(cacheHitMissData.cacheStatus);
+      }
 
       const responseTimesResponse = await fetch('/cache-response-times');
       const responseTimesData = await responseTimesResponse.json();

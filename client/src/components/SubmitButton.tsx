@@ -12,11 +12,13 @@ interface SubmitButtonProps {
   responseTimes: number[];
   queryResult: any;
   cacheSize: number;
+  cacheStatus: string;
   setCacheHits: React.Dispatch<React.SetStateAction<number>>;
   setCacheMisses: React.Dispatch<React.SetStateAction<number>>;
   setResponseTimes: React.Dispatch<React.SetStateAction<number[]>>;
   setQueryResult: React.Dispatch<React.SetStateAction<any>>;
   setCacheSize: React.Dispatch<React.SetStateAction<number>>;
+  setCacheStatus: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const SubmitButton: React.FC<SubmitButtonProps> = ({
@@ -25,6 +27,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
   cacheHits,
   cacheMisses,
   responseTimes,
+  cacheStatus,
   queryResult,
   cacheSize,
   setCacheHits,
@@ -32,6 +35,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
   setResponseTimes,
   setQueryResult,
   setCacheSize,
+  setCacheStatus,
   label = 'Submit',
   onClick,
   disabled = false,
@@ -54,6 +58,16 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
       const cacheHitMissData = await cacheHitMissReponse.json(); // converts to Javascript object
       setCacheHits(cacheHitMissData.cacheHits); // uses key to retrieve value and set state
       setCacheMisses(cacheHitMissData.cacheMisses);
+      if (cacheHitMissData.cacheStatus !== undefined) {
+        const randomValue = Math.random();
+        if (randomValue < 0.5) {
+          setCacheStatus("hit");
+        } else {
+          setCacheStatus("miss");
+        }
+      } else {
+      setCacheStatus(cacheHitMissData.cacheStatus);
+      }
 
       const responseTimesResponse = await fetch('/cache-response-times');
       const responseTimesData = await responseTimesResponse.json();
@@ -62,6 +76,7 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
       const cacheSizeResponse = await fetch('/cacheSize');
       const cacheSizeData = await cacheSizeResponse.json();
       setCacheSize(cacheSizeData);
+
     } catch (error) {
       console.error('Error fetching Chart Data:', error);
     }

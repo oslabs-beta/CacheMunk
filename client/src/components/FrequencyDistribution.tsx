@@ -16,7 +16,7 @@ const calculateBins = (data, binSize) => {
 
 const FrequencyDistribution = ({ cacheData, noCacheData, binSize = 0.1 }) => {
   const theme = useTheme(); // Use the theme hook
-  const combinedData = [...cacheData.responseTimes, ...noCacheData.responseTimes];
+  const combinedData = [...cacheData.values, ...noCacheData.values];
   const bins = calculateBins(combinedData, binSize);
 
   return (
@@ -28,7 +28,7 @@ const FrequencyDistribution = ({ cacheData, noCacheData, binSize = 0.1 }) => {
         style={{ width: "100%", height: "100%" }}
         data={[
           {
-            x: cacheData.responseTimes,
+            x: cacheData.values,
             type: 'histogram',
             name: 'Cache',
             marker: { color: '#8884d8' },
@@ -41,7 +41,7 @@ const FrequencyDistribution = ({ cacheData, noCacheData, binSize = 0.1 }) => {
             },
           },
           {
-            x: noCacheData.responseTimes,
+            x: noCacheData.values,
             type: 'histogram',
             name: 'No Cache',
             marker: { color: '#82ca9d' },
@@ -65,7 +65,7 @@ const FrequencyDistribution = ({ cacheData, noCacheData, binSize = 0.1 }) => {
           paper_bgcolor: theme.palette.background.paper,
           plot_bgcolor: theme.palette.background.paper,
           xaxis: {
-            title: 'Response Time (seconds, log scale)',
+            title: 'Response Time (milliseconds, log scale)',
             type: 'log',  // Uncomment to set the x-axis to logarithmic scale
             color: theme.palette.text.primary,
             gridcolor: theme.palette.text.secondary
