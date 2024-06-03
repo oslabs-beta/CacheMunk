@@ -1,5 +1,6 @@
 import { Redis } from 'ioredis';
 import { compress, uncompress } from 'snappy';
+import cache from './redisClient.js';
 
 type EventHandler = (queryKey: string, executionTime: number) => void;
 
@@ -14,6 +15,8 @@ interface Config {
 // instead of class (OOP) syntax for stronger encapsulation
 export const configureCache = (options: Config) => {
   const { redis } = options;
+
+  const cacheL1 = new Map<string, string>();
 
   // checks that redis passed in is an instance of Redis
   if (!(redis instanceof Redis)) {
@@ -86,6 +89,11 @@ export const configureCache = (options: Config) => {
     // Capture initial timestamp for performance monitoring
     const start = process.hrtime.bigint();
 
+    const fromL1Cache = cacheL1.get(queryKey);
+    if (fromL1Cache) {
+      return fromL1Cache;
+    }
+
     // Retrieve the cached query result based on query key
     // const startReq = process.hrtime.bigint();
     const compressedData = await redis.getBuffer(queryKey);
@@ -108,6 +116,11 @@ export const configureCache = (options: Config) => {
 
     // Convert result to string
     const data = binaryData.toString();
+
+    if (!cacheL1.has(queryKey)) {
+      cacheL1.set(queryKey, data);
+      setTimeout(() => cacheL1.delete(queryKey), 50);
+    }
 
     // Capture final timestamp
     const end = process.hrtime.bigint();
@@ -169,11 +182,11 @@ export const configureCache = (options: Config) => {
   async function getStringKeySize(): Promise<number> {
     let cursor = '0';
     let stringKeyCount = 0;
-  
+
     try {
       do {
         const [newCursor, keys] = await redis.scan(cursor, 'COUNT', 100);
-  
+
         cursor = newCursor;
         for (const key of keys) {
           const type = await redis.type(key);
@@ -182,7 +195,7 @@ export const configureCache = (options: Config) => {
           }
         }
       } while (cursor !== '0');
-  
+
       return stringKeyCount;
     } catch (err) {
       console.error('Error getting string key size', err);

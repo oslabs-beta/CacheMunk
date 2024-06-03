@@ -1,4 +1,3 @@
-import { getData } from '../controllers/cachingController.js';
 import { percentile, calculateStdev } from '../util/stats.js';
 import { timingFunc } from '../util/timing.js';
 
@@ -28,7 +27,7 @@ export const runTests = async (
   const start = performance.now();
   for (let i = 0; i < clients; i++) {
     clientsArr.push(runClient());
-    await delay(1);
+    await delay(5);
   }
 
   const res = await Promise.all(clientsArr);
@@ -41,14 +40,15 @@ export const runTests = async (
   const min = agg[0];
   const max = agg[agg.length - 1];
   const n = agg.length;
-  const avgRps = (n / totalExecTime) * 1000;
   const sum = agg.reduce((acc, curr) => acc + curr);
+  const avgRps = (n / totalExecTime) * 1000;
   const mean = sum / n;
   const stddev = calculateStdev(agg);
   const p50 = percentile(agg, 50);
   const p95 = percentile(agg, 95);
   const p99 = percentile(agg, 99);
   return {
+    sum,
     totalExecTime,
     avgRps,
     min,
