@@ -49,6 +49,7 @@ const App: React.FC = () => {
                   setCacheMisses={setCacheMisses}
                   setResponseTimes={setResponseTimes}
                   setQueryResult={setQueryResult}
+                  setCacheSize={setCacheSize}
                 />
               </Box>
               <Box padding={2} width='50%'>

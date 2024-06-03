@@ -16,10 +16,8 @@ const MetricCard: React.FC<{ title: string; value: number }> = ({ title, value }
   return (
     <Card sx={{ backgroundColor: theme.palette.background.paper, color: theme.palette.text.primary }}>
       <CardContent>
-        <Typography variant="h6" component="div">
-          {title.split('\n').map((line, index) => (
-            <div key={index}>{line}</div>
-          ))}
+        <Typography variant="h6" component="div" style={{ whiteSpace: 'pre-line' }}>
+          {title}
         </Typography>
         <Box display="flex" justifyContent="center" alignItems="center" height="100%">
           <Typography variant="h4" component="div">
@@ -30,6 +28,7 @@ const MetricCard: React.FC<{ title: string; value: number }> = ({ title, value }
     </Card>
   );
 };
+
 
 const CacheMetricsChart: React.FC<CacheMetricsChartProps> = ({ cacheHits, cacheMisses, cacheSize }) => {
   const data = {
@@ -86,7 +85,7 @@ const CacheMetricsChart: React.FC<CacheMetricsChartProps> = ({ cacheHits, cacheM
           height='100%'
           paddingLeft={2}
         >
-<MetricCard title="number of\nquery keys\nin the Redis cache" value={cacheSize} />
+          <MetricCard title={'number of query keys\nin the Redis cache'} value={cacheSize} />
         </Box>
       </Box>
     </Box>
