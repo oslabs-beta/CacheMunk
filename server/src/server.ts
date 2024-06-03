@@ -38,10 +38,10 @@ app.post('/benchmark', (req, res) => {
   let testFunc;
   if (cacheControl === 'no-cache') {
     // eslint-disable-next-line @typescript-eslint/require-await
-    testFunc = async () => getData(queryKey, 'no-cache');
+    testFunc = async () => getData(queryKey, 'no-cache', false);
   } else {
     // eslint-disable-next-line @typescript-eslint/require-await
-    testFunc = async () => getData(queryKey);
+    testFunc = async () => getData(queryKey, '', false);
   }
 
   runTests(clients, requests, queryKey, testFunc)

@@ -8,6 +8,7 @@ import cache from '../cache/redisClient.js';
 export const getData = async (
   queryKey: string,
   cacheControl?: string,
+  log = true,
 ): Promise<{ query: string; rows: pg.QueryResultRow }> => {
   const calcExecTime = (start: bigint, end: bigint) => Number(end - start) / 1_000_000;
 
@@ -21,8 +22,10 @@ export const getData = async (
 
     if (cachedResult) {
       const t1 = process.hrtime.bigint();
-      incrCacheHits(); // incr cache hit counter
-      addResponse(calcExecTime(t0, t1)); // add execution time to array
+      if (log) {
+        incrCacheHits(); // incr cache hit counter
+        addResponse(calcExecTime(t0, t1)); // add execution time to array
+      }
       return {
         query: queryText,
         rows: JSON.parse(cachedResult) as pg.QueryResultRow,
@@ -41,8 +44,10 @@ export const getData = async (
   const t1 = process.hrtime.bigint();
 
   // Time from cache miss and time querying from database
-  addResponse(calcExecTime(t0, t1));
-  incrCacheMisses();
+  if (log) {
+    addResponse(calcExecTime(t0, t1));
+    incrCacheMisses();
+  }
 
   return { query: queryText, rows: result.rows };
 };
