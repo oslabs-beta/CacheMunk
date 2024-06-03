@@ -9,6 +9,8 @@ interface CustomSelectQueryProps {
   setCacheMisses: React.Dispatch<React.SetStateAction<number>>;
   responseTimes: number[];
   setResponseTimes: React.Dispatch<React.SetStateAction<number[]>>;
+  cacheSize: number;
+  setCacheSize: React.Dispatch<React.SetStateAction<number>>;
 }
 
 // CustomSelectQuery component
@@ -19,6 +21,8 @@ const CustomSelectQuery: React.FC<CustomSelectQueryProps> = ({
   setCacheMisses,
   responseTimes,
   setResponseTimes,
+  cacheSize,
+  setCacheSize,
 }) => {
   const [query, setQuery] = useState('');
   const [result, setResult] = useState(null);
@@ -31,9 +35,14 @@ const CustomSelectQuery: React.FC<CustomSelectQueryProps> = ({
       const cacheHitMissData = await cacheHitMissReponse.json(); // converts to Javascript object
       setCacheHits(cacheHitMissData.cacheHits); // uses key to retrieve value and set state
       setCacheMisses(cacheHitMissData.cacheMisses);
+
       const responseTimesResponse = await fetch('/cache-response-times');
       const responseTimesData = await responseTimesResponse.json();
       setResponseTimes(responseTimesData);
+
+      const cacheSizeResponse = await fetch('/cacheSize');
+      const cacheSizeData = await cacheSizeResponse.json();
+      setCacheSize(cacheSizeData);
     } catch (error) {
       console.error('Error fetching Chart Data:', error);
     }
