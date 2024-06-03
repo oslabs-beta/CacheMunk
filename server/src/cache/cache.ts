@@ -166,7 +166,31 @@ export const configureCache = (options: Config) => {
     }
   }
 
-  return { set, get, invalidate, clear, getSize };
+  async function getStringKeySize(): Promise<number> {
+    let cursor = '0';
+    let stringKeyCount = 0;
+  
+    try {
+      do {
+        const [newCursor, keys] = await redis.scan(cursor, 'COUNT', 100);
+  
+        cursor = newCursor;
+        for (const key of keys) {
+          const type = await redis.type(key);
+          if (type === 'string') {
+            stringKeyCount++;
+          }
+        }
+      } while (cursor !== '0');
+  
+      return stringKeyCount;
+    } catch (err) {
+      console.error('Error getting string key size', err);
+      return 0;
+    }
+  }
+
+  return { set, get, invalidate, clear, getSize, getStringKeySize };
 };
 
 export default configureCache;

@@ -3,7 +3,7 @@ import { getData } from './controllers/cachingController.js';
 import { runTests } from './benchmarks/benchmark.js';
 import dataRouter from './routers/dataRouter.js';
 import { getCacheInfo, getCacheResponseTimes } from './analytics.js';
-import { getCacheSize } from './controllers/cacheSize.js';
+import { getCacheSize, getStringKeySize } from './controllers/cacheSize.js';
 import { deleteCache } from './controllers/deleteCache.js';
 
 const app = express();
@@ -62,7 +62,7 @@ app.get('/cache-response-times', (req, res) => {
 });
 
 // Endpoint to get the size of the redis cache
-app.get('/cacheSize', getCacheSize, (req, res) => {
+app.get('/cacheSize', getStringKeySize, (req, res) => {
   res.status(200).json(res.locals.cacheSize);
 });
 

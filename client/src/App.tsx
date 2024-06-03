@@ -24,6 +24,7 @@ const App: React.FC = () => {
   const [responseTimes, setResponseTimes] = useState<number[]>([]);
   const [queryResult, setQueryResult] = useState<any>({});
   const [tabValue, setTabValue] = useState(0);
+  const [cacheSize, setCacheSize] = useState<number>(0);
 
   const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -48,6 +49,7 @@ const App: React.FC = () => {
                   setCacheMisses={setCacheMisses}
                   setResponseTimes={setResponseTimes}
                   setQueryResult={setQueryResult}
+                  setCacheSize={setCacheSize}
                 />
               </Box>
               <Box padding={2} width='50%'>
@@ -65,10 +67,12 @@ const App: React.FC = () => {
                   setResponseTimes={setResponseTimes}
                   queryResult={queryResult}
                   setQueryResult={setQueryResult}
+                  cacheSize={cacheSize}
+                  setCacheSize={setCacheSize}
                 />
               </Box>
               <ResponseTimeChart responseTimes={responseTimes} />
-              <CacheMetricsChart cacheHits={cacheHits} cacheMisses={cacheMisses} />
+              <CacheMetricsChart cacheHits={cacheHits} cacheMisses={cacheMisses} cacheSize={cacheSize}/>
               <QueryResultBox queryResult={queryResult} />
               <CustomSelectQuery
                 cacheSwitch={cacheSwitch}
@@ -78,6 +82,8 @@ const App: React.FC = () => {
                 setCacheMisses={setCacheMisses}
                 responseTimes={responseTimes}
                 setResponseTimes={setResponseTimes}
+                cacheSize={cacheSize}
+                setCacheSize={setCacheSize}
               />
               <CustomInsertQuery
                 cacheHits={cacheHits}

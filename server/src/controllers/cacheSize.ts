@@ -9,3 +9,11 @@ export const getCacheSize = asyncWrapper(
     next();
   },
 );
+
+export const getStringKeySize = asyncWrapper(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const result = await cache.getStringKeySize();
+    res.locals.cacheSize = result
+    next();
+  },
+);
