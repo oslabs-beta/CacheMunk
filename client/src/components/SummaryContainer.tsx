@@ -117,7 +117,7 @@ const SummaryContainer: React.FC = () => {
       setCacheData(result);
     } catch (error) {
       console.error('Fetch cache data failed, using fallback data', error);
-      setCacheData(fallbackDataCache);
+      setCacheData(fullBenchmarkDataCache);
     }
   };
 
@@ -131,7 +131,8 @@ const SummaryContainer: React.FC = () => {
       setNoCacheData(result);
     } catch (error) {
       console.error('Fetch no cache data failed, using fallback data', error);
-      setNoCacheData(fallbackDataNoCache);
+      setNoCacheData(fullBenchmarkDataNoCache);
+      console.log('noCacheData', noCacheData);
     }
   };
 
