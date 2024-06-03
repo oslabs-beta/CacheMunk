@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import SummaryBarChart from './SummaryBarChart';
 import FrequencyDistribution from './FrequencyDistribution';
+import cacheDataJson from '../data/responseTimes-cache.json';
+import noCacheDataJson from '../data/responseTimes-no-cache.json';
 
 const fallbackDataCache = {
   totalExecTime: 411.261916,
@@ -98,6 +100,9 @@ const fallbackDataNoCache = {
   ]
 };
 
+const fullBenchmarkDataCache: object = cacheDataJson;
+const fullBenchmarkDataNoCache: object = noCacheDataJson;
+
 const SummaryContainer: React.FC = () => {
   const [cacheData, setCacheData] = useState(null);
   const [noCacheData, setNoCacheData] = useState(null);
@@ -112,7 +117,7 @@ const SummaryContainer: React.FC = () => {
       setCacheData(result);
     } catch (error) {
       console.error('Fetch cache data failed, using fallback data', error);
-      setCacheData(fallbackDataCache);
+      setCacheData(fullBenchmarkDataCache);
     }
   };
 
@@ -126,7 +131,8 @@ const SummaryContainer: React.FC = () => {
       setNoCacheData(result);
     } catch (error) {
       console.error('Fetch no cache data failed, using fallback data', error);
-      setNoCacheData(fallbackDataNoCache);
+      setNoCacheData(fullBenchmarkDataNoCache);
+      console.log('noCacheData', noCacheData);
     }
   };
 
