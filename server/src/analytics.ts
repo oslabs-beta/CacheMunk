@@ -5,6 +5,7 @@ let cacheResponseTimes: number[] = [];
 const cacheInfo = {
   cacheHits: 0,
   cacheMisses: 0,
+  status: '',
 };
 
 export const addResponse = (execTime: number): void => {
@@ -17,15 +18,18 @@ export const resetResponse = (): void => {
 
 export const incrCacheHits = (): void => {
   cacheInfo.cacheHits++;
+  cacheInfo.status = 'CACHE_HIT';
 };
 
 export const incrCacheMisses = (): void => {
   cacheInfo.cacheMisses++;
+  cacheInfo.status = 'CACHE_MISS';
 };
 
 export const resetCache = (): void => {
   cacheInfo.cacheHits = 0;
   cacheInfo.cacheMisses = 0;
+  cacheInfo.status = '';
 };
 
 export const getCacheInfo = () => cacheInfo;
