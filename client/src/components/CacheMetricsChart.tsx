@@ -2,6 +2,7 @@ import React from 'react';
 import { Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js/auto';
 import { Box, Typography, Card, CardContent, useTheme } from '@mui/material';
+import StatusCard from './CacheStatus';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -31,7 +32,7 @@ const MetricCard: React.FC<{ title: string; value: number }> = ({ title, value }
 };
 
 
-const CacheMetricsChart: React.FC<CacheMetricsChartProps> = ({ cacheHits, cacheMisses, cacheSize }) => {
+const CacheMetricsChart: React.FC<CacheMetricsChartProps> = ({ cacheHits, cacheMisses, cacheSize, cacheStatus }) => {
   const data = {
     labels: ['Cache Hits', 'Cache Misses'],
     datasets: [
@@ -82,11 +83,21 @@ const CacheMetricsChart: React.FC<CacheMetricsChartProps> = ({ cacheHits, cacheM
           display='flex'
           alignItems='center'
           justifyContent='center'
-          width='50%'
+          width='25%'
           height='100%'
           paddingLeft={2}
         >
           <MetricCard title={'number of query keys\nin the Redis cache'} value={cacheSize} />
+        </Box>
+        <Box
+          display='flex'
+          alignItems='center'
+          justifyContent='center'
+          width='25%'
+          height='100%'
+          paddingLeft={2}
+        >
+          <StatusCard cacheStatus={cacheStatus} />
         </Box>
       </Box>
     </Box>
