@@ -55,7 +55,7 @@ export default {
     },
     proxy: [
       {
-        context: ['/data', '/test', '/cache-analytics', '/cache-response-times', '/deleteCache', '/cacheSize'],
+        context: ['/data', '/test', '/cache-analytics', '/cache-response-times', '/deleteCache', '/cacheSize', '/benchmark'],
         target: 'http://localhost:3030',
       },
     ],

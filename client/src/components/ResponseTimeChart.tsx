@@ -47,6 +47,7 @@ const ResponseTimeChart: React.FC<ResponseTimeChartProps> = ({ responseTimes }) 
       padding={2}
       width='100%'
       height='350px'
+      borderRadius={2}
     >
       <Typography variant='h6' gutterBottom>
         Response Times for /cache Endpoint
@@ -64,6 +65,7 @@ const ResponseTimeChart: React.FC<ResponseTimeChartProps> = ({ responseTimes }) 
       </Box>
     </Box>
   );
+  
 };
 
 export default ResponseTimeChart;
