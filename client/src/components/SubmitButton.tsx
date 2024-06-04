@@ -58,17 +58,9 @@ const SubmitButton: React.FC<SubmitButtonProps> = ({
       const cacheHitMissData = await cacheHitMissReponse.json(); // converts to Javascript object
       setCacheHits(cacheHitMissData.cacheHits); // uses key to retrieve value and set state
       setCacheMisses(cacheHitMissData.cacheMisses);
-      console.log("CacheHitMissData.cacheStatus: ", cacheHitMissData.cacheStatus)
-      if (cacheHitMissData.cacheStatus === undefined) {
-        const randomValue = Math.random();
-        if (randomValue < 0.5) {
-          setCacheStatus("hit");
-        } else {
-          setCacheStatus("miss");
-        }
-      } else {
-      setCacheStatus(cacheHitMissData.cacheStatus);
-      }
+      console.log("CacheHitMissData.status: ", cacheHitMissData.status)
+      setCacheStatus(cacheHitMissData.status);
+      
 
       const responseTimesResponse = await fetch('/cache-response-times');
       const responseTimesData = await responseTimesResponse.json();

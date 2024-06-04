@@ -39,16 +39,8 @@ const CustomSelectQuery: React.FC<CustomSelectQueryProps> = ({
       const cacheHitMissData = await cacheHitMissReponse.json(); // converts to Javascript object
       setCacheHits(cacheHitMissData.cacheHits); // uses key to retrieve value and set state
       setCacheMisses(cacheHitMissData.cacheMisses);
-      if (cacheHitMissData.cacheStatus !== undefined) {
-        const randomValue = Math.random();
-        if (randomValue < 0.5) {
-          setCacheStatus("hit");
-        } else {
-          setCacheStatus("miss");
-        }
-      } else {
-      setCacheStatus(cacheHitMissData.cacheStatus);
-      }
+      console.log("CacheHitMissData.status: ", cacheHitMissData.status)
+      setCacheStatus(cacheHitMissData.status);
 
       const responseTimesResponse = await fetch('/cache-response-times');
       const responseTimesData = await responseTimesResponse.json();
@@ -102,7 +94,7 @@ const CustomSelectQuery: React.FC<CustomSelectQueryProps> = ({
       <Typography variant="h6" gutterBottom>
         Custom Select Query
       </Typography>
-      <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column" width="100%" maxWidth="600px">
+      <Box component="form" onSubmit={handleSubmit} display="flex" flexDirection="column" width="100%" maxWidth="600px"   sx={{ minWidth: '500px' }}>
         <TextField
           label="Enter your SELECT query"
           variant="outlined"
@@ -112,34 +104,38 @@ const CustomSelectQuery: React.FC<CustomSelectQueryProps> = ({
           multiline
           rows={4}
           margin="normal"
+          sx={{ width: '100%' }}
         />
-        <Button type="submit" variant="contained" color="primary">
-          Submit Query
-        </Button>
+        <Box display="flex" justifyContent="center">
+          <Button type="submit" variant="contained" color="primary" size="small" sx={{ marginTop: 2 }}>
+            Submit Query
+          </Button>
+        </Box>
       </Box>
       {error && <Typography color="error">{error}</Typography>}
       {result && (
         <Box marginTop={4} width="100%">
           <Typography variant="h6">Query Result</Typography>
-          <pre // Display the result in a pre tag
+          <pre
             style={{
               backgroundColor: 'white',
-              overflow: 'auto', // creates the scrollbar
-              padding: '10px', // padding around the text
-              border: '1px solid #ccc', // border around the text
-              whiteSpace: 'pre-wrap', // keep the formatting
-              wordWrap: 'break-word', // break the text
-              height: '300px', // fixed height
-              maxHeight: '300px', // max height
+              overflow: 'auto',
+              padding: '10px',
+              border: '1px solid #ccc',
+              whiteSpace: 'pre-wrap',
+              wordWrap: 'break-word',
+              height: '300px',
+              maxHeight: '300px',
               color: 'black',
             }}
           >
-            {JSON.stringify(result, null, 2)} {/* Display the result as JSON */}
+            {JSON.stringify(result, null, 2)}
           </pre>
         </Box>
       )}
     </Box>
   );
 };
+
 
 export default CustomSelectQuery;

@@ -4,13 +4,13 @@ import { Box } from '@mui/material';
 
 const SummaryBarChart = ({ cacheData, noCacheData }) => {
     const data = [
-        { name: 'Min', Cache: parseFloat(cacheData.min.toFixed(3)), 'No Cache': parseFloat(noCacheData.min.toFixed(3)) },
-        { name: 'Max', Cache: parseFloat(cacheData.max.toFixed(3)), 'No Cache': parseFloat(noCacheData.max.toFixed(3)) },
-        { name: 'Mean', Cache: parseFloat(cacheData.mean.toFixed(3)), 'No Cache': parseFloat(noCacheData.mean.toFixed(3)) },
-        { name: 'Stdev', Cache: parseFloat(cacheData.stddev.toFixed(3)), 'No Cache': parseFloat(noCacheData.stddev.toFixed(3)) },
-        { name: 'P50', Cache: parseFloat(cacheData.p50.toFixed(3)), 'No Cache': parseFloat(noCacheData.p50.toFixed(3)) },
-        { name: 'P95', Cache: parseFloat(cacheData.p95.toFixed(3)), 'No Cache': parseFloat(noCacheData.p95.toFixed(3)) },
-        { name: 'P99', Cache: parseFloat(cacheData.p99.toFixed(3)), 'No Cache': parseFloat(noCacheData.p99.toFixed(3)) },
+        { name: 'Min', Cache: parseFloat(cacheData.min?.toFixed(3) || 0), 'No Cache': parseFloat(noCacheData.min?.toFixed(3) || 0) },
+        { name: 'Max', Cache: parseFloat(cacheData.max?.toFixed(3) || 0), 'No Cache': parseFloat(noCacheData.max?.toFixed(3) || 0) },
+        { name: 'Mean', Cache: parseFloat(cacheData.mean?.toFixed(3) || 0), 'No Cache': parseFloat(noCacheData.mean?.toFixed(3) || 0) },
+        { name: 'Stdev', Cache: parseFloat(cacheData.stddev?.toFixed(3) || 0), 'No Cache': parseFloat(noCacheData.stddev?.toFixed(3) || 0) },
+        { name: 'P50', Cache: parseFloat(cacheData.p50?.toFixed(3) || 0), 'No Cache': parseFloat(noCacheData.p50?.toFixed(3) || 0) },
+        { name: 'P95', Cache: parseFloat(cacheData.p95?.toFixed(3) || 0), 'No Cache': parseFloat(noCacheData.p95?.toFixed(3) || 0) },
+        { name: 'P99', Cache: parseFloat(cacheData.p99?.toFixed(3) || 0), 'No Cache': parseFloat(noCacheData.p99?.toFixed(3) || 0) },
     ];
 
 

@@ -13,35 +13,49 @@ const StatusCard: React.FC<StatusCardProps> = ({ cacheStatus }) => {
 
   const getStatusColor = () => {
     switch (cacheStatus) {
-      case 'hit':
-        return '#FF6384';
-      case 'miss':
+      case 'CACHE_HIT':
         return '#36A2EB';
+      case 'CACHE_MISS':
+        return '#FF6384';
       default:
         return 'transparent';
     }
   };
 
-  const imageSrc = cacheStatus === 'hit'
+  const imageSrc = cacheStatus === 'CACHE_HIT'
     ? '/images/happy_cachemunk_png_transparent.png'
-    : cacheStatus === 'miss'
+    : cacheStatus === 'CACHE_MISS'
       ? '/images/sad_cachemunk_png_transparent.png'
-      : '';
+      : null;
 
-  return (
-    <Card sx={{ backgroundColor: theme.palette.background.paper, color: getStatusColor() }}>
-      <CardContent>
-        <Typography variant="h6" component="div">
-          {cacheStatus ? `Cache ${cacheStatus}!` : ''}
-        </Typography>
-        {cacheStatus && (
-          <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-            <img src={imageSrc} alt={cacheStatus} style={{ maxWidth: '100px', maxHeight: '100px' }} />
-          </Box>
-        )}
-      </CardContent>
-    </Card>
-  );
-};
+    const cacheMessage = cacheStatus === 'CACHE_HIT' 
+    ? 'Cache Hit!' 
+    : cacheStatus === 'CACHE_MISS' 
+    ? 'Cache Miss!' 
+    : null;
+
+    const cardStyle = {
+        width: '300px', 
+        height: '200px', 
+        backgroundColor: theme.palette.background.paper,
+        color: getStatusColor(),
+      };
+
+    return (
+        cacheStatus && (
+          <Card sx={cardStyle}>
+            <CardContent>
+              <Typography variant="h6" component="div" sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column', height: '100%' }}>
+                {cacheMessage}
+              </Typography>
+              <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+                <img src={imageSrc} alt={cacheMessage} style={{ maxWidth: '135x', maxHeight: '135px' }} />
+              </Box>
+            </CardContent>
+          </Card>
+        )
+      );
+      
+};      
 
 export default StatusCard;

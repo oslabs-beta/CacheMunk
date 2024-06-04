@@ -7,6 +7,7 @@ interface ClearCacheButtonProps {
   setResponseTimes: React.Dispatch<React.SetStateAction<number[]>>;
   setQueryResult: React.Dispatch<React.SetStateAction<any>>;
   setCacheSize?: React.Dispatch<React.SetStateAction<number>>;
+  setCacheStatus?: React.Dispatch<React.SetStateAction<string | null>>;
   label?: string;
   onClick?: () => void;
   disabled?: boolean;
@@ -18,6 +19,7 @@ const ClearCacheButton: React.FC<ClearCacheButtonProps> = ({
   setResponseTimes,
   setQueryResult,
   setCacheSize,
+  setCacheStatus,
   label = 'Clear Cache',
   onClick,
   disabled = false,
@@ -36,6 +38,7 @@ const ClearCacheButton: React.FC<ClearCacheButtonProps> = ({
       setResponseTimes([]);
       setQueryResult({});
       setCacheSize(0);
+      setCacheStatus(null);
 
       if (onClick) {
         onClick();

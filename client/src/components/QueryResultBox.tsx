@@ -17,6 +17,7 @@ const QueryResultBox: React.FC<QueryResultProps> = ({ queryResult }) => {
       justifyContent="center"
       border={1}
       borderColor="grey.500"
+      borderRadius={2}
       padding={2}
       width="100%"
       height="350px"
