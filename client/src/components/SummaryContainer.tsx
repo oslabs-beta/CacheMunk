@@ -17,7 +17,7 @@ const SummaryContainer: React.FC = () => {
   const fetchCacheData = async () => {
     const requestBody = {
       clients: 5, // clients running in parallel
-      requests: 1000, // requests per client
+      requests: 500, // requests per client
       queryKey: 'SELECT_CITIES_COSTLY',
       'Cache-Control': null
     };
@@ -47,7 +47,7 @@ const SummaryContainer: React.FC = () => {
   const fetchNoCacheData = async () => {
     const requestBody = {
       clients: 5, // clients running in parallel
-      requests: 1000, // requests per client
+      requests: 500, // requests per client
       queryKey: 'SELECT_CITIES_COSTLY',
       'Cache-Control': 'no-cache' 
     };
@@ -77,8 +77,15 @@ const SummaryContainer: React.FC = () => {
 
   const fetchData = async () => {
     setLoading(true);
-    await Promise.all([fetchCacheData(), fetchNoCacheData()]);
-    setLoading(false);
+  
+    try {
+      await fetchCacheData();
+      await fetchNoCacheData();
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
