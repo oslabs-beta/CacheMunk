@@ -4,13 +4,13 @@ import { getData } from './controllers/cachingController.js';
 import { runTests } from './benchmarks/benchmark.js';
 import dataRouter from './routers/dataRouter.js';
 import { getCacheInfo, getCacheResponseTimes } from './analytics.js';
-import { getCacheSize, getStringKeySize } from './controllers/cacheSize.js';
+import { getStringKeySize } from './controllers/cacheSize.js';
 import { deleteCache } from './controllers/deleteCache.js';
 
 const app = express();
 
 // specify the port number to listen on
-const PORT = 3030;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3030;
 
 // express middleware that parses JSON bodies
 app.use(express.json());
