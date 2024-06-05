@@ -1,6 +1,5 @@
 import { Redis } from 'ioredis';
 import { compress, uncompress } from 'snappy';
-import cache from './redisClient.js';
 
 type EventHandler = (queryKey: string, executionTime: number) => void;
 
