@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
+import path from 'node:path';
 import { getData } from './controllers/cachingController.js';
 import { runTests } from './benchmarks/benchmark.js';
 import dataRouter from './routers/dataRouter.js';
@@ -13,6 +14,17 @@ const PORT = 3030;
 
 // express middleware that parses JSON bodies
 app.use(express.json());
+
+app.use(express.static(path.resolve('client/public')));
+app.use(express.static(path.resolve('client/dist')));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.resolve('client/dist/index.html'));
+});
+
+app.use('/summary', (req, res) => {
+  res.sendFile(path.resolve('client/dist/index.html'));
+});
 
 // route for all database requests
 app.use('/data', dataRouter);
