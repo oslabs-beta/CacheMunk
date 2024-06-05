@@ -1,5 +1,6 @@
 # Dependency directories
 node_modules/
+/cachemunk/node_modules/
 
 # Environment configuration files
 .env
@@ -28,6 +29,7 @@ pids
 /server/dist
 /client/dist
 /test/dist
+/cachemunk/dist
 
 # TypeScript compiled files
 *.tsbuildinfo
