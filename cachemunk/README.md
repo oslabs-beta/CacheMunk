@@ -134,7 +134,10 @@ Returns the total number of keys in the current Redis database.
 Returns the number of string keys in the current Redis database.
 
 
-## Example 
+## Example
+
+You can copy, paste, and run the code the code below to see these functions in action!
+
 ```
 import { Redis } from 'ioredis';
 import { configureCache } from 'cachemunk';
