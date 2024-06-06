@@ -1,18 +1,62 @@
 import express, { Request, Response, NextFunction } from 'express';
+import path from 'node:path';
+import { pool } from './db.js';
+import { cache } from './cache/redisClient.js';
 import { getData } from './controllers/cachingController.js';
 import { runTests } from './benchmarks/benchmark.js';
 import dataRouter from './routers/dataRouter.js';
 import { getCacheInfo, getCacheResponseTimes } from './analytics.js';
-import { getCacheSize, getStringKeySize } from './controllers/cacheSize.js';
+import { getStringKeySize } from './controllers/cacheSize.js';
 import { deleteCache } from './controllers/deleteCache.js';
 
 const app = express();
 
 // specify the port number to listen on
-const PORT = 3030;
+const PORT = process.env.PORT ? parseInt(process.env.PORT) : 3030;
+
+// Function to test the database connection on startup
+void (async () => {
+  try {
+    const client = await pool.connect();
+    await client.query('SELECT NOW()');
+    // eslint-disable-next-line no-console
+    console.log('Database connected successfully!!!');
+    client.release();
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log('Error connecting to the database:');
+  }
+})();
+
+// Function to test the cache connection on startup
+void (async () => {
+  try {
+    await cache.set('ping', 'pong', []);
+
+    const res = await cache.get('ping');
+    if (res === 'pong') {
+      console.log('Successfully received pong from redis!');
+      console.log('version updated 10:57pm');
+    }
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log('Error connecting to redis oops:');
+  }
+})();
 
 // express middleware that parses JSON bodies
 app.use(express.json());
+
+app.use(express.static(path.resolve('client/public')));
+app.use(express.static(path.resolve('client/dist')));
+
+app.get('/', (req, res) => {
+  res.sendFile(path.resolve('client/dist/index.html'));
+});
+
+app.use('/summary', (req, res) => {
+  res.sendFile(path.resolve('client/dist/index.html'));
+});
 
 // route for all database requests
 app.use('/data', dataRouter);
@@ -84,11 +128,13 @@ app.use(
     res: Response,
     _next: NextFunction,
   ) => {
+    console.log('global middlware error:', err);
     const defaultErr: object = {
       log: 'Express error handler caught unknown middleware error',
       status: 500,
       message: { err: 'An error occurred' },
     };
+
     const errorObj = Object.assign({}, defaultErr, err);
     res.status(errorObj.status).json(errorObj.message);
   },

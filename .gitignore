@@ -1,3 +1,8 @@
+compose-test.yml
+Dockerfile-test
+server_test.js
+compose-test copy.yml
+
 # Dependency directories
 node_modules/
 /cachemunk/node_modules/
