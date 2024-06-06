@@ -20,14 +20,13 @@ const getCitiesCostly = asyncWrapper(async (req: Request, res: Response, next: N
 });
 
 const getDynamicSelect = asyncWrapper(async (req: Request, res: Response, next: NextFunction) => {
-  const customQuery: string = (req.body as { query: string }).query;  
+  const customQuery: string = (req.body as { query: string }).query;
   queriesMap[customQuery] = customQuery;
   const tableName: string | null = extractTableName(customQuery);
   if (tableName) {
     dependenciesMap[customQuery] = [tableName];
-  }
-  else{
-  dependenciesMap[customQuery] = [];
+  } else {
+    dependenciesMap[customQuery] = [];
   }
   const result = await getData(customQuery);
   // console.log('result:', result);
@@ -36,14 +35,13 @@ const getDynamicSelect = asyncWrapper(async (req: Request, res: Response, next: 
   next();
 });
 
-
 function extractTableName(query: string): string | null {
   // Define the regex pattern to match the table name
   const regex = /from\s+([a-zA-Z_][a-zA-Z0-9_]*)/i;
-  
+
   // Execute the regex on the query
   const match = query.match(regex);
-  
+
   // If a match is found, return the table name, otherwise return null
   return match ? match[1] : null;
 }
