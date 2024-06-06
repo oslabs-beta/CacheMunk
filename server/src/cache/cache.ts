@@ -1,4 +1,4 @@
-import { Redis } from 'ioredis';
+import type { Redis } from 'ioredis';
 import { compress, uncompress } from 'snappy';
 
 type EventHandler = (queryKey: string, executionTime: number) => void;
@@ -16,11 +16,6 @@ export const configureCache = (options: Config) => {
   const { redis } = options;
 
   const cacheL1 = new Map<string, string>();
-
-  // checks that redis passed in is an instance of Redis
-  if (!(redis instanceof Redis)) {
-    throw new Error('ioredis client not found');
-  }
 
   // set default ttl to 1 hour (3600 seconds)
   const defaultTtl = options.defaultTtl && options.defaultTtl > 0 ? options.defaultTtl : 3600;
@@ -59,20 +54,22 @@ export const configureCache = (options: Config) => {
 
     if (dependencies.length > 0) {
       // Create a pipeline/transaction (ensure data integrity and consistency. If one fail, all fails)
-      const pipeline = redis.multi();
+      // const pipeline = redis.multi();
 
       // Store the query result
-      pipeline.set(queryKey, compressedData, 'EX', ttlInSeconds);
+      await redis.set(queryKey, compressedData, 'EX', ttlInSeconds);
 
       // Track dependencies
       dependencies.forEach((dependency) => {
         const dependencyKey = `dependency:${dependency}`;
-        pipeline.sadd(dependencyKey, queryKey);
-        pipeline.expire(dependencyKey, ttlInSeconds); // Set the TTL for the dependency key
+        void (async () => {
+          await redis.sadd(dependencyKey, queryKey);
+          await redis.expire(dependencyKey, ttlInSeconds); // Set the TTL for the dependency key
+        })();
       });
 
       // Execute the pipeline
-      await pipeline.exec();
+      // await pipeline.exec();
     } else {
       await redis.set(queryKey, compressedData, 'EX', ttlInSeconds);
     }
@@ -142,12 +139,12 @@ export const configureCache = (options: Config) => {
 
     if (queriesToInvalidate.length > 0) {
       // Create a pipeline to batch multiple operations
-      const pipeline = redis.multi();
+      // const pipeline = redis.multi();
 
-      queriesToInvalidate.forEach((queryKey) => pipeline.del(queryKey));
-      pipeline.del(dependencyKey);
+      queriesToInvalidate.forEach((queryKey) => void redis.del(queryKey));
+      await redis.del(dependencyKey);
 
-      await pipeline.exec();
+      // await pipeline.exec();
     } else {
       // Clear the dependency set if it's the only key
       await redis.del(dependencyKey);
