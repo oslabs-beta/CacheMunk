@@ -328,7 +328,7 @@ testCache();
 
 ### Cachemunk Integrated with PostgreSQL
 
-Copy, paste, and run the code the code below to see the library in action once integrated with PostgreSQL. The code below assumes you have a Redis server and PostgreSQL server running locally with a database called "mydatabase".
+Copy, paste, and run the code the code below to see the library in action, integrated with PostgreSQL and Redis. It assumes you have a Redis server and PostgreSQL server running locally with a database called "mydatabase". 
 
 ```
 import pkg from 'pg';
@@ -378,6 +378,7 @@ const query = async (text) => {
 // Define getData function
 const getData = async (queryKey, queryText, dependencies) => {
   // Check the cache
+  await delay(50); // Delay before interacting with cache
   const cachedResult = await cache.get(queryKey);
   if (cachedResult) {
     console.log('Cache hit');
@@ -388,6 +389,7 @@ const getData = async (queryKey, queryText, dependencies) => {
   const result = await query(queryText);
 
   // Cache the result
+  await delay(50); // Delay before interacting with cache
   await cache.set(queryKey, JSON.stringify(result.rows), dependencies);
 
   console.log('Cache miss');
@@ -401,6 +403,7 @@ const insertData = async (insertText, dependencies) => {
     const result = await query(insertText);
 
     // Invalidate the cache for the specific dependencies
+    await delay(50); // Delay before interacting with cache
     await cache.invalidate(dependencies);
 
     console.log('Cache invalidated for dependencies:', dependencies);
@@ -428,6 +431,9 @@ const setupDatabase = async () => {
     // Drop the table if it exists
     await query('DROP TABLE IF EXISTS mytable');
 
+    // Drop the sequence if it exists to avoid duplicate key issues
+    await query('DROP SEQUENCE IF EXISTS mytable_id_seq');
+
     // Create the table
     await query(`
       CREATE TABLE mytable (
@@ -446,7 +452,19 @@ const setupDatabase = async () => {
   }
 };
 
-// Test function to demonstrate functionality
+// Define a function to clear all cache
+const clearCache = async () => {
+  try {
+    await cache.clear();
+    console.log('All cache keys cleared.');
+  } catch (err) {
+    console.error('Error clearing cache:', err);
+  }
+};
+
+// Delay function to wait for a specified number of milliseconds
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
 const main = async () => {
   try {
     // Setup the database
@@ -455,29 +473,52 @@ const main = async () => {
     // Insert data and invalidate the cache
     const insertText1 = "INSERT INTO mytable (name) VALUES ('New Entry 1')";
     const dependencies = ['dependency1'];
+
+    // Delay before interacting with cache
+    await delay(50);
     await insertData(insertText1, dependencies);
 
+    // Delay before interacting with cache
+    await delay(50);
     // Get data (should query the database and cache the result)
     const queryKey = 'myQueryKey';
     const queryText = 'SELECT * FROM mytable';
     let data = await getData(queryKey, queryText, dependencies);
     console.log('Data:', data);
 
+    // Delay before interacting with cache
+    await delay(50);
     // Perform a cache hit
     data = await getData(queryKey, queryText, dependencies);
     console.log('Data (cache hit):', data);
 
+    // Delay before interacting with cache
+    await delay(50);
     // Insert more data and invalidate the cache
     const insertText2 = "INSERT INTO mytable (name) VALUES ('New Entry 2')";
     await insertData(insertText2, dependencies);
 
+    // Delay before interacting with cache
+    await delay(50);
     // Get data again (should query the database again due to invalidation)
     const dataAfterInsert = await getData(queryKey, queryText, dependencies);
     console.log('Data after insert:', dataAfterInsert);
 
+    // Delay before interacting with cache
+    await delay(50);
     // Fetch and show the entire table
     const allData = await fetchAllData();
     console.log('All data in mytable:', allData);
+
+    // Clear all cache keys
+    console.log('Clearing all cache keys...');
+    await clearCache();
+
+    // Verify cache is cleared by attempting to get data
+    console.log('Verifying cache is cleared...');
+    data = await getData(queryKey, queryText, dependencies);
+    console.log('Data after cache clear:', data);
+
   } catch (error) {
     console.error('Error:', error);
   }

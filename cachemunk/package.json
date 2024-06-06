@@ -1,6 +1,6 @@
 {
   "name": "cachemunk",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Performance-Optimized Caching Middleware for Node.js: Efficiently abstracts Redis to cache RDBMS query results, enhancing Node.js applications with sub-millisecond latency",
   "main": "dist/cache.js",
   "types": "dist/cache.d.ts",
