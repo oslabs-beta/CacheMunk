@@ -47,7 +47,7 @@ If not already installed on your server, install Redis OSS (Redis Open Source So
     ```
 ## 6. Usage
 ### Install CacheMunk
-Install the cachemunk library using npm. 'ioredis' and 'snappy' dependencies will be installed if needed.
+Install the cachemunk library using npm. `ioredis` and `snappy` dependencies will be installed if needed.
 ```
 npm install cachemunk
 ```
@@ -59,8 +59,8 @@ import { configureCache } from 'cachemunk';
 ### Instantiate Redis
 ```
 const redis = new Redis({
-  host: '127.0.0.1',
-  port: 6379
+  host: '127.0.0.1', // modify as needed or pass in as env variable
+  port: 6379 // modify as needed or pass in as env variable
 });
 
 ```
@@ -103,9 +103,10 @@ const cache = configureCache({
 
 
 ## Functions
-configureCache is a factory function that returns the following methods for you to use wherever needed: 
 
-### `set(queryKey: string, data: string | Buffer, dependencies: string[], ttlInSeconds?: number): Promise<void>`
+configureCache() is a factory function that returns the following methods for you to use wherever needed. 
+
+#### `set(queryKey: string, data: string | Buffer, dependencies: string[], ttlInSeconds?: number): Promise<void>`
 Adds a query result to the cache.
 
 - **queryKey:** The key under which the data is stored.
@@ -113,28 +114,104 @@ Adds a query result to the cache.
 - **dependencies:** An array of dependencies associated with this cache entry.
 - **ttlInSeconds:** Time-to-live for the cache entry in seconds (optional, defaults to the configured defaultTtl).
 
-### `get(queryKey: string): Promise<string | null>`
+#### `get(queryKey: string): Promise<string | null>`
 Retrieves a cached query result.
 
 - **queryKey:** The key of the cached data to retrieve.
 - **Returns:** The cached data as a string, or null if the data is not found.
 
-### `invalidate(dependency: string): Promise<void>`
+#### `invalidate(dependency: string): Promise<void>`
 Invalidates cache entries based on a dependency.
 
 - **dependency:** The dependency key whose associated cache entries need to be invalidated.
 
-### `clear(): Promise<void>`
+#### `clear(): Promise<void>`
 Clears the entire cache for the current Redis database.
 
-### `getSize(): Promise<number>`
+#### `getSize(): Promise<number>`
 Returns the total number of keys in the current Redis database.
 
-### `getStringKeySize(): Promise<number>`
+#### `getStringKeySize(): Promise<number>`
 Returns the number of string keys in the current Redis database.
 
+## Integrating with PostgreSQL
 
-## Example
+To integrate with PostgreSQL, create your Pool instance and write your own wrapper functions that call functions from the cachemunk library to set, get and invalidate query results. Here are some simple examples.
+
+### Create a new Pool Instance
+
+```
+import { Pool } from 'pg';
+
+const pool = new Pool({
+  user: 'postgres', // Replace with your PostgreSQL user
+  host: 'localhost', // Replace with your PostgreSQL host
+  database: 'mydatabase', // Replace with your PostgreSQL database
+  password: 'mypassword', // Replace with your PostgreSQL password
+  port: 5432, // Replace with your PostgreSQL port
+});
+```
+
+### Define a query function 
+
+```
+export const query = async (text, params) => {
+  try {
+    const result = await pool.query(text, params);
+    return result;
+  } catch (err) {
+    console.error(`Error executing query ${text}:`, err);
+    throw err; // Re-throw the error after logging it
+  }
+};
+```
+
+### Define a getData() function that uses cachemunk `get` and `set`
+
+```
+// Define getData function
+const getData = async (queryKey, queryText, dependencies) => {
+  // Check the cache
+  const cachedResult = await cache.get(queryKey);
+  if (cachedResult) {
+    console.log('Cache hit');
+    return JSON.parse(cachedResult);
+  }
+
+  // Query the database if not cached
+  const result = await query(queryText);
+
+  // Cache the result
+  await cache.set(queryKey, JSON.stringify(result.rows), dependencies);
+
+  console.log('Cache miss');
+  return result.rows;
+};
+```
+
+### Define an insertData() function that uses cachemunk `invalidate`
+
+```
+// Define insertData function with cache invalidation
+const insertData = async (insertText, dependencies) => {
+  // Execute the insert query
+  try {
+    const result = await query(insertText);
+
+    // Invalidate the cache for the specific dependencies
+    await cache.invalidate(dependencies);
+
+    console.log('Cache invalidated for dependencies:', dependencies);
+    return result;
+  } catch (err) {
+    console.error(`Error executing insert ${insertText}:`, err);
+    throw err; // Re-throw the error after logging it
+  }
+};
+
+```
+
+## Example - Test Factory Functions with Redis Only
 
 You can copy, paste, and run the code the code below to see these functions in action!
 
@@ -247,11 +324,186 @@ testCache();
 
 ```
 
+## Example - Test Factory Functions with Redis and PostgreSQL 
 
+### Cachemunk Integrated with PostgreSQL
 
+Copy, paste, and run the code the code below to see the library in action once integrated with PostgreSQL. The code below assumes you have a Redis server and PostgreSQL server running locally with a database called "mydatabase".
 
+```
+import pkg from 'pg';
+const { Pool } = pkg;
+import { Redis } from 'ioredis';
+import { configureCache } from 'cachemunk';
 
+// Configure Redis
+const redis = new Redis({
+  host: '127.0.0.1', // Replace with your Redis host
+  port: 6379 // Replace with your Redis port
+});
 
+// Configure Cachemunk
+const cache = configureCache({
+  redis,
+  defaultTtl: 3600,
+  maxEntrySize: 5000000,
+  onCacheHit: (queryKey, executionTime) => {
+    console.log(`Cache hit for key: ${queryKey} in ${executionTime}ms`);
+  },
+  onCacheMiss: (queryKey, executionTime) => {
+    console.log(`Cache miss for key: ${queryKey} in ${executionTime}ms`);
+  }
+});
 
+// Create a new Pool instance
+const pool = new Pool({
+  user: 'postgres', // Replace with your PostgreSQL user
+  host: 'localhost', // Replace with your PostgreSQL host
+  database: 'mydatabase', // Replace with your PostgreSQL database
+  password: 'mypassword', // Replace with your PostgreSQL password
+  port: 5432, // Replace with your PostgreSQL port
+});
 
+// Define a query function
+const query = async (text) => {
+  try {
+    const result = await pool.query(text);
+    return result;
+  } catch (err) {
+    console.error(`Error executing query ${text}:`, err);
+    throw err; // Re-throw the error after logging it
+  }
+};
 
+// Define getData function
+const getData = async (queryKey, queryText, dependencies) => {
+  // Check the cache
+  const cachedResult = await cache.get(queryKey);
+  if (cachedResult) {
+    console.log('Cache hit');
+    return JSON.parse(cachedResult);
+  }
+
+  // Query the database if not cached
+  const result = await query(queryText);
+
+  // Cache the result
+  await cache.set(queryKey, JSON.stringify(result.rows), dependencies);
+
+  console.log('Cache miss');
+  return result.rows;
+};
+
+// Define insertData function with cache invalidation
+const insertData = async (insertText, dependencies) => {
+  // Execute the insert query
+  try {
+    const result = await query(insertText);
+
+    // Invalidate the cache for the specific dependencies
+    await cache.invalidate(dependencies);
+
+    console.log('Cache invalidated for dependencies:', dependencies);
+    return result;
+  } catch (err) {
+    console.error(`Error executing insert ${insertText}:`, err);
+    throw err; // Re-throw the error after logging it
+  }
+};
+
+// Define a function to fetch the entire table
+const fetchAllData = async () => {
+  try {
+    const result = await query('SELECT * FROM mytable');
+    return result.rows;
+  } catch (err) {
+    console.error('Error fetching all data:', err);
+    throw err;
+  }
+};
+
+// Define a function to setup the database
+const setupDatabase = async () => {
+  try {
+    // Drop the table if it exists
+    await query('DROP TABLE IF EXISTS mytable');
+
+    // Create the table
+    await query(`
+      CREATE TABLE mytable (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL
+      );
+    `);
+
+    // Insert initial dummy data
+    await query("INSERT INTO mytable (name) VALUES ('First Entry')");
+    await query("INSERT INTO mytable (name) VALUES ('Second Entry')");
+    await query("INSERT INTO mytable (name) VALUES ('Third Entry')");
+  } catch (err) {
+    console.error('Error setting up the database:', err);
+    throw err;
+  }
+};
+
+// Test function to demonstrate functionality
+const main = async () => {
+  try {
+    // Setup the database
+    await setupDatabase();
+
+    // Insert data and invalidate the cache
+    const insertText1 = "INSERT INTO mytable (name) VALUES ('New Entry 1')";
+    const dependencies = ['dependency1'];
+    await insertData(insertText1, dependencies);
+
+    // Get data (should query the database and cache the result)
+    const queryKey = 'myQueryKey';
+    const queryText = 'SELECT * FROM mytable';
+    let data = await getData(queryKey, queryText, dependencies);
+    console.log('Data:', data);
+
+    // Perform a cache hit
+    data = await getData(queryKey, queryText, dependencies);
+    console.log('Data (cache hit):', data);
+
+    // Insert more data and invalidate the cache
+    const insertText2 = "INSERT INTO mytable (name) VALUES ('New Entry 2')";
+    await insertData(insertText2, dependencies);
+
+    // Get data again (should query the database again due to invalidation)
+    const dataAfterInsert = await getData(queryKey, queryText, dependencies);
+    console.log('Data after insert:', dataAfterInsert);
+
+    // Fetch and show the entire table
+    const allData = await fetchAllData();
+    console.log('All data in mytable:', allData);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+};
+
+main();
+```
+## Issues
+
+## Contributors
+![Olivia Carlisle](https://github.com/oliviacarlisle.png?size=100)
+
+Olivia Carlisle 
+Github: [@oliviacarlisle](https://github.com/oliviacarlisle)
+
+![Jayan Pillai](https://github.com/jrpillai.png?size=100)
+
+Jayan Pillai 
+Github: [@jrpillai](https://github.com/jrpillai)
+
+![Nick Angelopoulous](https://github.com/nickangel7.png?size=100)
+
+Nick Angelopoulous 
+Github: [@nickangel7](https://github.com/nickangel7)
+
+![Amy YQ Jiang](https://github.com/yj776.png?size=100)
+
+Amy YQ Jiang 
+Github: [@yj776](https://github.com/yj776)
